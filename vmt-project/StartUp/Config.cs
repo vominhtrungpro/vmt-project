@@ -36,6 +36,11 @@ namespace vmt_project.StartUp
             GetAndSetConfig("RedisConnectionString", redis);
             GetAndSetConfig("RedisInstanceName", redis);
             GetAndSetConfig("RedisCacheTimeExpire", redis);
+
+            var storage = _configuration.GetSection("Storage");
+            GetAndSetConfig("StorageConnectionString", storage);
+            GetAndSetConfig("StorageImageContainerName", storage);
+            GetAndSetConfig("StorageBlobUrl", storage);
         }
         private void GetAndSetConfig(string config,IConfigurationSection section)
         {

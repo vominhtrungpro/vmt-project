@@ -21,6 +21,7 @@ namespace vmt_project.StartUp
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUploadService, UploadService>();
             #endregion Service Mapping
 
             #region Redis Cahe Service Mapping
