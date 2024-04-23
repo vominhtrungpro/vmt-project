@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "AzureWebJobsStorageConnectionStringValue",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "AzureSignalRConnectionString": "Endpoint=https://signalr-vmt.service.signalr.net;AccessKey=ACql0U5fkz+ysnpOUNdfqx4+EUazZ01dQehnuEr75Oc=;Version=1.0;"
+  }
+}

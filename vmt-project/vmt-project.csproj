@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>vmt_project</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="8.0.2" />
+    <PackageReference Include="LinqKit" Version="1.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SignalRService" Version="1.13.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="RedisCache.Core" Version="2.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\vmt-project.common\vmt-project.common.csproj" />
+    <ProjectReference Include="..\vmt-project.dal\vmt-project.dal.csproj" />
+    <ProjectReference Include="..\vmt-project.models\vmt-project.models.csproj" />
+    <ProjectReference Include="..\vmt-project.services\vmt-project.services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NetCore.BackEnd.API">
+      <HintPath>..\..\..\SimplyBlast\originv2\simplyblast-web\lib\Backend\API\NetCore.BackEnd.API.dll</HintPath>
+    </Reference>
+    <Reference Include="NetCore.BackEnd.Service.Common">
+      <HintPath>..\..\..\SimplyBlast\originv2\simplyblast-web\lib\Backend\Service\NetCore.BackEnd.Service.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NetCore.Infrastructure.API">
+      <HintPath>..\..\..\SimplyBlast\originv2\simplyblast-web\lib\Backend\Core\NetCore.Infrastructure.API.dll</HintPath>
+    </Reference>
+    <Reference Include="NetCore.Infrastructure.Common">
+      <HintPath>..\..\..\SimplyBlast\originv2\simplyblast-web\lib\Backend\Core\NetCore.Infrastructure.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NetCore.Infrastructure.IPC">
+      <HintPath>..\..\..\SimplyBlast\originv2\simplyblast-web\lib\Backend\Core\NetCore.Infrastructure.IPC.dll</HintPath>
+    </Reference>
+    <Reference Include="NetCore.Infrastructure.Security">
+      <HintPath>..\..\..\SimplyBlast\originv2\simplyblast-web\lib\Backend\Core\NetCore.Infrastructure.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="NetCore.Infrastructure.Services">
+      <HintPath>..\..\..\SimplyBlast\originv2\simplyblast-web\lib\Backend\Core\NetCore.Infrastructure.Services.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
