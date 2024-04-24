@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using vmt_project.dal.Models.Context;
 
@@ -11,9 +12,11 @@ using vmt_project.dal.Models.Context;
 namespace vmt_project.dal.Migrations
 {
     [DbContext(typeof(VmtDbContext))]
-    partial class VmtDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240424021632_add-userinfo")]
+    partial class adduserinfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,6 +248,10 @@ namespace vmt_project.dal.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("UserInfoId")
+                        .IsUnique()
+                        .HasFilter("[UserInfoId] IS NOT NULL");
+
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
@@ -270,14 +277,7 @@ namespace vmt_project.dal.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("UserInfo");
                 });
@@ -333,15 +333,13 @@ namespace vmt_project.dal.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("vmt_project.dal.Models.Entities.UserInfo", b =>
+            modelBuilder.Entity("vmt_project.dal.Models.Entities.User", b =>
                 {
-                    b.HasOne("vmt_project.dal.Models.Entities.User", "User")
-                        .WithOne("UserInfo")
-                        .HasForeignKey("vmt_project.dal.Models.Entities.UserInfo", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("vmt_project.dal.Models.Entities.UserInfo", "UserInfo")
+                        .WithOne("User")
+                        .HasForeignKey("vmt_project.dal.Models.Entities.User", "UserInfoId");
 
-                    b.Navigation("User");
+                    b.Navigation("UserInfo");
                 });
 
             modelBuilder.Entity("vmt_project.dal.Models.Entities.UserRoleMapping", b =>
@@ -359,9 +357,10 @@ namespace vmt_project.dal.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("vmt_project.dal.Models.Entities.User", b =>
+            modelBuilder.Entity("vmt_project.dal.Models.Entities.UserInfo", b =>
                 {
-                    b.Navigation("UserInfo");
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

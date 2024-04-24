@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using vmt_project.dal.Models.Entities;
+using vmt_project.models.DTO.User;
 using vmt_project.services.Redis.Base;
 
 namespace vmt_project.services.Redis
@@ -24,13 +25,13 @@ namespace vmt_project.services.Redis
         {
             return "user-profile:" + userId;
         }
-        public async Task SetUserProfileCache(User user)
+        public async Task SetUserProfileCache(UserDto user)
         {
             await _redis.SetAsync(Key(user.Id), user, _cacheTimeExpire);
         }
-        public async Task<User> GetUserProfileCache(string userId)
+        public async Task<UserDto> GetUserProfileCache(string userId)
         {
-            return await _redis.GetAsync<User>(Key(userId));
+            return await _redis.GetAsync<UserDto>(Key(userId));
         }
 
     }

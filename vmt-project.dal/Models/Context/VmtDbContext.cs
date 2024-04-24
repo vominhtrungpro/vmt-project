@@ -39,6 +39,7 @@ namespace vmt_project.dal.Models.Context
 
         #region DbSet
         public DbSet<Character> Characters { get; set; }
+        public DbSet<UserInfo> UserInfo { get; set; }
         #endregion
 
         #region Configuration & Navigation
@@ -47,12 +48,25 @@ namespace vmt_project.dal.Models.Context
             if (!optionsBuilder.IsConfigured)
             {
                 var appSetting = JsonConvert.DeserializeObject<AppSetting>(File.ReadAllText("appsettings.json"));
-                optionsBuilder.UseSqlServer(appSetting.ConnectionString);
+                optionsBuilder.UseSqlServer(appSetting.ConnectionString, sqlServerOptionsAction : sqlOption => 
+                {
+                    sqlOption.EnableRetryOnFailure();
+                });
+
+                optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             }
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<User>()
+                .HasOne(u => u.UserInfo)
+                .WithOne(ui => ui.User)
+                .HasForeignKey<UserInfo>(ui => ui.UserId);
+
+            builder.Entity<User>().Navigation(u => u.UserInfo).AutoInclude();
+
         }
         #endregion
 

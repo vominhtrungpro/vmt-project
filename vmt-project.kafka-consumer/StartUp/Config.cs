@@ -1,10 +1,12 @@
-﻿using NetCore.Infrastructure.Common.Helpers;
-using vmt_project.dal.Contracts;
-using vmt_project.dal.Implementations;
-using vmt_project.services.Contracts;
-using vmt_project.services.Implementations;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace vmt_project.StartUp
+namespace vmt_project.kafka_consumer.StartUp
 {
     public class Config
     {
@@ -45,10 +47,10 @@ namespace vmt_project.StartUp
             var kafka = _configuration.GetSection("Kafka");
             GetAndSetConfig("KafkaBootstrapServers", kafka);
         }
-        private void GetAndSetConfig(string config,IConfigurationSection section)
+        private void GetAndSetConfig(string config, IConfigurationSection section)
         {
             var value = Environment.GetEnvironmentVariable(config);
-            if (value.IsNullOrEmpty()) 
+            if (value.IsNullOrEmpty())
             {
                 Environment.SetEnvironmentVariable(config, section[config]);
             }

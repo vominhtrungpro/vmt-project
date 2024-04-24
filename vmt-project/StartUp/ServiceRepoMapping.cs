@@ -2,6 +2,8 @@
 using vmt_project.dal.Implementations;
 using vmt_project.services.Contracts;
 using vmt_project.services.Implementations;
+using vmt_project.services.Kafka;
+using vmt_project.services.Kafka.Base;
 using vmt_project.services.Redis;
 using vmt_project.services.Redis.Base;
 
@@ -22,6 +24,7 @@ namespace vmt_project.StartUp
             builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUploadService, UploadService>();
+            builder.Services.AddScoped<IUserInfoService, UserInfoService>();
             #endregion Service Mapping
 
             #region Redis Cahe Service Mapping
@@ -29,8 +32,14 @@ namespace vmt_project.StartUp
             builder.Services.AddScoped<IGenericRedisService, GenericRedisService>();
             #endregion Redis Cahe Service Mapping
 
+            #region Kafka Service Mapping
+            builder.Services.AddScoped<IUserInfoKafkaService, UserInfoKafkaService>();
+            builder.Services.AddScoped<IGenericKafkaService, GenericKafkaService>();
+            #endregion Kafka Service Mapping
+
             #region Repository Mapping
             builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
+            builder.Services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             #endregion Repository Mapping
         }
     }

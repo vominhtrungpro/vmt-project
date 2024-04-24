@@ -32,17 +32,17 @@ namespace vmt_project.services.Implementations
         public async Task<AppActionResultData<UserDto>> GetUserProfileById(string id)
         {
             var result = new AppActionResultData<UserDto>();
-            User? userEntity;
-            userEntity = await _userRedisService.GetUserProfileCache(id);
-            if (userEntity == null)
+            var userDtoCache = await _userRedisService.GetUserProfileCache(id);
+            if (userDtoCache != null)
             {
-                userEntity = await _userManager.FindByIdAsync(id);
+                await _userRedisService.SetUserProfileCache(userDtoCache);
+                return result.BuildResult(userDtoCache);
             }
-            if (userEntity is null)
+            var userEntity = await _userManager.FindByIdAsync(id);
+            if (userEntity == null)
             {
                 return result.BuildError("User not found!");
             }
-            await _userRedisService.SetUserProfileCache(userEntity);
             var userDto = new UserDto()
             {
                 Id = id,
@@ -51,18 +51,18 @@ namespace vmt_project.services.Implementations
                 FirstName = userEntity.FirstName,
                 LastName = userEntity.LastName,
             };
+            if (userEntity.UserInfo != null)
+            {
+                userDto.AvatarUrl = userEntity.UserInfo.AvatarUrl;
+            }
+            await _userRedisService.SetUserProfileCache(userDto);
             return result.BuildResult(userDto);
         }
         public async Task<AppActionResult> ChangePasswordUserAsync(ChangePasswordRequest request)
         {
             var result = new AppActionResult();
-            User? userEntity;
-            userEntity = await _userRedisService.GetUserProfileCache(request.UserId);
+            var userEntity = await _userManager.FindByIdAsync(request.UserId);
             if (userEntity == null)
-            {
-                userEntity = await _userManager.FindByIdAsync(request.UserId);
-            }
-            if (userEntity is null)
             {
                 return result.BuildError("User not found!");
             }
@@ -78,7 +78,6 @@ namespace vmt_project.services.Implementations
             var editPasswordResult = await _userManager.ChangePasswordAsync(userEntity, request.CurrentPassword, request.Password);
             if ( editPasswordResult.Succeeded)
             {
-                await _userRedisService.SetUserProfileCache(userEntity);
                 return result.BuildResult("Success!");
             }
             return result.BuildError("Cant change pass!"); ;
@@ -101,20 +100,14 @@ namespace vmt_project.services.Implementations
         public async Task<AppActionResult> ResetPassword(ResetPasswordRequest request)
         {
             var result = new AppActionResult();
-            User? userEntity;
-            userEntity = await _userRedisService.GetUserProfileCache(request.UserId);
+            var userEntity = await _userManager.FindByIdAsync(request.UserId);
             if (userEntity == null)
-            {
-                userEntity = await _userManager.FindByIdAsync(request.UserId);
-            }
-            if (userEntity is null)
             {
                 return result.BuildError("User not found!");
             }
             var editPasswordResult = await _userManager.ResetPasswordAsync(userEntity, request.ResetToken, request.NewPassword);
             if (editPasswordResult.Succeeded)
             {
-                await _userRedisService.SetUserProfileCache(userEntity);
                 return result.BuildResult("Password reset success!");
             }
             return result.BuildError("Cant reset pass!"); ;
