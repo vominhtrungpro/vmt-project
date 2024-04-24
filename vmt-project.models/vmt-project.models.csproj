@@ -17,4 +17,8 @@
     <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\vmt-project.dal\vmt-project.dal.csproj" />
+  </ItemGroup>
+
 </Project>

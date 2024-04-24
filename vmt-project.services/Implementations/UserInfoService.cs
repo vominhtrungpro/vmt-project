@@ -12,6 +12,7 @@ using vmt_project.dal.Contracts;
 using vmt_project.dal.Models.Entities;
 using vmt_project.models.DTO.User;
 using vmt_project.models.DTO.UserInfo;
+using vmt_project.models.Request.Kafka;
 using vmt_project.models.Request.UserInfo;
 using vmt_project.services.Contracts;
 using vmt_project.services.Kafka;
@@ -40,9 +41,13 @@ namespace vmt_project.services.Implementations
             var userInfoEntity = _userInfoRepository.FindBy(m => m.UserId == request.UserId).FirstOrDefault();
             if (userInfoEntity != null)
             {
-                userInfoEntity.AvatarUrl = request.AvatarUrl;
-                userInfoEntity.SetModifiedInfo(ClaimHelper.GetCurrentUserId(_httpContextAccessor));
-                _userInfoKafkaService.PublishUpdateUserInfo(userInfoEntity);
+                var message = new UpdateUserInfoRequestMessage()
+                {
+                    AvatarUrl = request.AvatarUrl,
+                    UserId = request.UserId,
+                    CurrentUserId = ClaimHelper.GetCurrentUserId(_httpContextAccessor)
+                };
+                _userInfoKafkaService.PublishUpdateUserInfo(message);
                 var userDtoCache = await _userRedisService.GetUserProfileCache(request.UserId);
                 if (userDtoCache != null)
                 {
@@ -53,13 +58,13 @@ namespace vmt_project.services.Implementations
             }
             else
             {
-                var userInfo = new UserInfo()
+                var message = new InsertUserInfoRequestMessage()
                 {
                     AvatarUrl = request.AvatarUrl,
                     UserId = request.UserId,
+                    CurrentUserId = ClaimHelper.GetCurrentUserId(_httpContextAccessor)
                 };
-                userInfo.SetCreatedInfo(ClaimHelper.GetCurrentUserId(_httpContextAccessor));
-                _userInfoKafkaService.PublishInsertUserInfo(userInfo);
+                _userInfoKafkaService.PublishInsertUserInfo(message);
                 var userDtoCache = await _userRedisService.GetUserProfileCache(request.UserId);
                 if (userDtoCache != null)
                 {

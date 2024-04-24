@@ -4,6 +4,7 @@ using Confluent.Kafka.Admin;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using vmt_project.dal.Models.Entities;
+using vmt_project.models.Request.Kafka;
 using vmt_project.models.Request.UserInfo;
 using vmt_project.services.Contracts;
 
@@ -70,7 +71,7 @@ public class Consumer : BackgroundService
                         case "insert-user-info":
                             try
                             {
-                                _kafkaService.InsertUserInfoMessage(JsonConvert.DeserializeObject<UserInfo>(response.Message.Value));
+                                _kafkaService.InsertUserInfoMessage(JsonConvert.DeserializeObject<InsertUserInfoRequestMessage>(response.Message.Value));
                                 Console.WriteLine($"Success: Message: {response.Message.Value}, Topic: {response.Topic}");
                             }
                             catch (Exception ex)
@@ -83,7 +84,7 @@ public class Consumer : BackgroundService
                         case "update-user-info":
                             try
                             {
-                                _kafkaService.UpdateUserInfoMessage(JsonConvert.DeserializeObject<UserInfo>(response.Message.Value));
+                                _kafkaService.UpdateUserInfoMessage(JsonConvert.DeserializeObject<UpdateUserInfoRequestMessage>(response.Message.Value));
                                 Console.WriteLine($"Success: Message: {response.Message.Value}, Topic: {response.Topic}");
                             }
                             catch (Exception ex)

@@ -39,29 +39,6 @@ builder.ConfigureServices((context, services) =>
     });
     services.AddHostedService<Consumer>();
 
-    //services.AddIdentity<User,Role>(o => {
-    //    o.Password.RequireDigit = false;
-    //    o.Password.RequireLowercase = false;
-    //    o.Password.RequireUppercase = false;
-    //    o.Password.RequireNonAlphanumeric = false;
-    //    o.User.RequireUniqueEmail = true;
-    //})
-    //.AddEntityFrameworkStores<VmtDbContext>()
-    //.AddDefaultTokenProviders();
-
-    //services.AddRedisCache(options =>
-    //{
-    //    options.Configuration = Environment.GetEnvironmentVariable("RedisConnectionString");
-    //    options.InstanceName = Environment.GetEnvironmentVariable("RedisInstanceName");
-    //});
-
-    //services.AddScoped<IUserInfoService, UserInfoService>();
-    //services.AddScoped<IUserInfoRepository, UserInfoRepository>();
-    //services.AddScoped<IUserRedisService, UserRedisService>();
-    //services.AddScoped<IGenericRedisService, GenericRedisService>();
-    //services.AddScoped<IUserInfoKafkaService, UserInfoKafkaService>();
-    //services.AddScoped<IGenericKafkaService, GenericKafkaService>();
-
     services.AddScoped<IKafkaService, KafkaService>();
     services.AddScoped<IUserInfoRepository, UserInfoRepository>();
 
