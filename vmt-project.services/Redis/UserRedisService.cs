@@ -27,11 +27,26 @@ namespace vmt_project.services.Redis
         }
         public async Task SetUserProfileCache(UserDto user)
         {
-            await _redis.SetAsync(Key(user.Id), user, _cacheTimeExpire);
+            try
+            {
+                await _redis.SetAsync(Key(user.Id), user, _cacheTimeExpire);
+            }
+            catch (Exception)
+            {
+            }
+            
         }
         public async Task<UserDto> GetUserProfileCache(string userId)
         {
-            return await _redis.GetAsync<UserDto>(Key(userId));
+            try
+            {
+                return await _redis.GetAsync<UserDto>(Key(userId));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
     }
