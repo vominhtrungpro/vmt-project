@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using vmt_project.models.DTO.UserInfo;
 
 namespace vmt_project.models.DTO.User
 {
@@ -11,8 +12,6 @@ namespace vmt_project.models.DTO.User
         public string? Id { get; set; }
         public string? UserName { get; set; }
         public string? Email { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public string? AvatarUrl { get; set; }
+        public UserInfoDto? UserInfo { get; set; }
     }
 }

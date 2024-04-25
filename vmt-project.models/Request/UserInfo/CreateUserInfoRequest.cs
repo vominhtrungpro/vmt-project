@@ -10,5 +10,7 @@ namespace vmt_project.models.Request.UserInfo
     {
         public string UserId { get; set; }
         public string AvatarUrl { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

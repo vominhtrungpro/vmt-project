@@ -9,8 +9,6 @@ namespace vmt_project.models.Request.Authentication
 {
     public class RegisterRequest
     {
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
         [Required(ErrorMessage = "Username is required")]
         public string UserName { get; set; }
         [Required(ErrorMessage = "Email is required")]

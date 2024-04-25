@@ -8,6 +8,8 @@ namespace vmt_project.dal.Models.Entities
 {
     public class UserInfo : Entity
     {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? AvatarUrl { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }

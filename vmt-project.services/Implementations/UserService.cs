@@ -45,15 +45,18 @@ namespace vmt_project.services.Implementations
             }
             var userDto = new UserDto()
             {
-                Id = id,
+                Id = userEntity.Id,
                 UserName = userEntity.UserName,
                 Email = userEntity.Email,
-                FirstName = userEntity.FirstName,
-                LastName = userEntity.LastName,
             };
             if (userEntity.UserInfo != null)
             {
-                userDto.AvatarUrl = userEntity.UserInfo.AvatarUrl;
+                userDto.UserInfo = new models.DTO.UserInfo.UserInfoDto()
+                {
+                    AvatarUrl = userEntity.UserInfo.AvatarUrl,
+                    FirstName = userEntity.UserInfo.FirstName,
+                    LastName = userEntity.UserInfo.LastName,
+                };
             }
             await _userRedisService.SetUserProfileCache(userDto);
             return result.BuildResult(userDto);

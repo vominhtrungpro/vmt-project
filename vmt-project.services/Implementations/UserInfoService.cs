@@ -45,13 +45,29 @@ namespace vmt_project.services.Implementations
                 {
                     AvatarUrl = request.AvatarUrl,
                     UserId = request.UserId,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
                     CurrentUserId = ClaimHelper.GetCurrentUserId(_httpContextAccessor)
                 };
                 _userInfoKafkaService.PublishUpdateUserInfo(message);
                 var userDtoCache = await _userRedisService.GetUserProfileCache(request.UserId);
                 if (userDtoCache != null)
                 {
-                    userDtoCache.AvatarUrl = request.AvatarUrl;
+                    if (userDtoCache.UserInfo != null)
+                    {
+                        userDtoCache.UserInfo.AvatarUrl = request.AvatarUrl;
+                        userDtoCache.UserInfo.FirstName = request.FirstName;
+                        userDtoCache.UserInfo.LastName = request.LastName;
+                    }
+                    else
+                    {
+                        userDtoCache.UserInfo = new UserInfoDto()
+                        {
+                            AvatarUrl = request.AvatarUrl,
+                            FirstName = request.FirstName,
+                            LastName= request.LastName,
+                        };
+                    }
                     await _userRedisService.SetUserProfileCache(userDtoCache);
                 }
                 return result.BuildResult("Success");
@@ -62,13 +78,29 @@ namespace vmt_project.services.Implementations
                 {
                     AvatarUrl = request.AvatarUrl,
                     UserId = request.UserId,
-                    CurrentUserId = ClaimHelper.GetCurrentUserId(_httpContextAccessor)
+                    CurrentUserId = ClaimHelper.GetCurrentUserId(_httpContextAccessor),
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
                 };
                 _userInfoKafkaService.PublishInsertUserInfo(message);
                 var userDtoCache = await _userRedisService.GetUserProfileCache(request.UserId);
                 if (userDtoCache != null)
                 {
-                    userDtoCache.AvatarUrl = request.AvatarUrl;
+                    if (userDtoCache.UserInfo != null)
+                    {
+                        userDtoCache.UserInfo.AvatarUrl = request.AvatarUrl;
+                        userDtoCache.UserInfo.FirstName = request.FirstName;
+                        userDtoCache.UserInfo.LastName = request.LastName;
+                    }
+                    else
+                    {
+                        userDtoCache.UserInfo = new UserInfoDto()
+                        {
+                            AvatarUrl = request.AvatarUrl,
+                            FirstName = request.FirstName,
+                            LastName = request.LastName,
+                        };
+                    }
                     await _userRedisService.SetUserProfileCache(userDtoCache);
                 }
                 return result.BuildResult("Success");

@@ -26,11 +26,7 @@ namespace vmt_project.Controllers
             try
             {
                 var result = await _userService.GetUserProfileById(id);
-                if (result.IsSuccess)
-                {
-                    return Success(result.Data, result.Detail);
-                }
-                return BadRequest(BuildErrorApiResult(result.Detail));
+                return Success(result.Data, result.Detail);
             }
             catch (Exception ex)
             {
@@ -52,12 +48,7 @@ namespace vmt_project.Controllers
                 }
 
                 var result = await _userService.ChangePasswordUserAsync(request);
-
-                if (result.IsSuccess)
-                {
-                    return Success(result.Detail);
-                }
-                return BadRequest(BuildErrorApiResult(result.Detail));
+                return Success(result.Detail);
 
             }
             catch (Exception ex)
@@ -81,12 +72,7 @@ namespace vmt_project.Controllers
                 }
 
                 var result = await _userService.ForgetPassword(request);
-
-                if (result.IsSuccess)
-                {
-                    return Success(null, "Success");
-                }
-                return BadRequest(BuildErrorApiResult("Failed!", null));
+                return Success(result.Detail);
             }
             catch (Exception ex)
             {
@@ -109,12 +95,7 @@ namespace vmt_project.Controllers
                 }
 
                 var result = await _userService.ResetPassword(request);
-
-                if (result.IsSuccess)
-                {
-                    return Success(result.Detail);
-                }
-                return BadRequest(BuildErrorApiResult(result.Detail));
+                return Success(result.Detail);
             }
             catch (Exception ex)
             {

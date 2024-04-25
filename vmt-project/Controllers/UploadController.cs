@@ -33,7 +33,7 @@ namespace vmt_project.Controllers
                 var urls = new List<string>();  
                 if (files == null)
                 {
-                    return BadRequest(BuildErrorApiResult(""));
+                    return Success(null);
                 }
                 else
                 {
@@ -46,7 +46,7 @@ namespace vmt_project.Controllers
                         }
                         else
                         {
-                            return BadRequest(BuildErrorApiResult(upload.Detail));
+                            return Success(upload.Detail);
                         }
                     }
                 }
@@ -71,11 +71,7 @@ namespace vmt_project.Controllers
                 else
                 {
                     var result = await _uploadService.RemoveBlobs(request.Urls);
-                    if (result.IsSuccess)
-                    {
-                        return Success(result.Detail);
-                    }
-                    return BadRequest(BuildErrorApiResult(result.Detail));
+                    return Success(result.Detail);
                 }
             }
             catch (Exception)

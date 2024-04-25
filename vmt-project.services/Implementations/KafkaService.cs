@@ -25,6 +25,8 @@ namespace vmt_project.services.Implementations
             {
                 AvatarUrl = request.AvatarUrl,
                 UserId = request.UserId,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
             };
             userInfo.SetCreatedInfo(request.CurrentUserId);
             _userInfoRepository.Add(userInfo);
@@ -35,6 +37,8 @@ namespace vmt_project.services.Implementations
             if (userEntity != null)
             {
                 userEntity.AvatarUrl = request.AvatarUrl;
+                userEntity.FirstName = request.FirstName;
+                userEntity.LastName = request.LastName;
                 userEntity.SetModifiedInfo(request.CurrentUserId);
                 _userInfoRepository.ClearTracker();
                 _userInfoRepository.Edit(userEntity);
@@ -42,3 +46,4 @@ namespace vmt_project.services.Implementations
         }
     }
 }
+

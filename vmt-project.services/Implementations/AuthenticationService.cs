@@ -40,7 +40,7 @@ namespace vmt_project.services.Implementations
                 var user = await _userManager.FindByEmailAsync(request.Email);
                 if (user == null)
                 {
-                    result.BuildError(ERROR_LOGIN_USER_NOT_FOUND);
+                    return result.BuildError(ERROR_LOGIN_USER_NOT_FOUND);
                 }
                 var isValid = await _userManager.CheckPasswordAsync(user, request.Password);
                 if (!isValid)
@@ -83,8 +83,6 @@ namespace vmt_project.services.Implementations
                 // init user from request
                 var user = new User()
                 {
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
                     Email = request.Email,
                     UserName = request.UserName,
                 };
@@ -168,12 +166,16 @@ namespace vmt_project.services.Implementations
             {
                 new Claim("UserName", user.UserName),
                 new Claim("UserId", user.Id),
-                new Claim("FirstName", user.FirstName ?? string.Empty),
-                new Claim("LastName", user.LastName ?? string.Empty),
                 new Claim("Email", user.Email),
                 new Claim("tokenExpireTime", DateTime.UtcNow.AddMinutes(_jwtConfig.AccessTokenExpiresIn).Ticks.ToString()),
                 new Claim("refreshExpireTime", DateTime.UtcNow.AddMinutes(_jwtConfig.RefreshTokenExpiresIn).Ticks.ToString()),
             };
+            if (user.UserInfo != null)
+            {
+                claims.Add(new Claim("FirstName", user.UserInfo.FirstName ?? string.Empty));
+                claims.Add(new Claim("LastName", user.UserInfo.LastName ?? string.Empty));
+            }
+
             var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {

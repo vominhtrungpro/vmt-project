@@ -23,12 +23,7 @@ namespace vmt_project.Controllers
             try
             {
                 var result = await _characterService.List();
-
-                if (result.IsSuccess)
-                {
-                    return Success(result.Data, result.Detail);
-                }
-                return BadRequest(BuildErrorApiResult(result.Detail));
+                return Success(result.Data, result.Detail);
             }
             catch (Exception ex)
             {
@@ -48,11 +43,7 @@ namespace vmt_project.Controllers
                     return ClientError(ModelState);
                 }
                 var result = await _characterService.Create(request);
-                if (result.IsSuccess)
-                {
-                    return Success(null, result.Detail);
-                }
-                return BadRequest(BuildErrorApiResult(result.Detail));
+                return Success(null, result.Detail);
             }
             catch (Exception ex)
             {
