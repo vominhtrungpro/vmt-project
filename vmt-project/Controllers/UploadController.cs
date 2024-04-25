@@ -46,7 +46,7 @@ namespace vmt_project.Controllers
                         }
                         else
                         {
-                            return BadRequest(BuildErrorApiResult(upload.Detail));
+                            return new OkObjectResult(BuildErrorApiResult(upload.Detail));
                         }
                     }
                 }
@@ -75,7 +75,7 @@ namespace vmt_project.Controllers
                     {
                         return Success(result.Detail);
                     }
-                    return BadRequest(BuildErrorApiResult(result.Detail));
+                    return new OkObjectResult(BuildErrorApiResult(result.Detail));
                 }
             }
             catch (Exception)

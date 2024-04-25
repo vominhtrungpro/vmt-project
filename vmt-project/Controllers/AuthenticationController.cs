@@ -38,7 +38,7 @@ namespace vmt_project.Controllers
                 {
                     return Success(result.Data, result.Detail);
                 }
-                return BadRequest(BuildErrorApiResult(result.Detail));
+                return new OkObjectResult(BuildErrorApiResult(result.Detail));
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace vmt_project.Controllers
                 {
                     return Success(result.Data, result.Detail);
                 }
-                return BadRequest(BuildErrorApiResult(result.Detail));
+                return new OkObjectResult(BuildErrorApiResult(result.Detail));
             }
             catch (Exception ex)
             {

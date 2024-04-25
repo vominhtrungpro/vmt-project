@@ -35,7 +35,7 @@ namespace vmt_project.Controllers
                 {
                     return Success(result.Detail);
                 }
-                return BadRequest(BuildErrorApiResult(result.Detail));
+                return new OkObjectResult(BuildErrorApiResult(result.Detail));
 
             }
             catch (Exception ex)
