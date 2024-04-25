@@ -34,7 +34,11 @@ namespace vmt_project.Controllers
                 }
 
                 var result = await _authenticationService.Login(request);
-                return Success(result.Data, result.Detail);
+                if (result.IsSuccess)
+                {
+                    return Success(result.Data, result.Detail);
+                }
+                return BadRequest(BuildErrorApiResult(result.Detail));
             }
             catch (Exception ex)
             {
@@ -57,7 +61,11 @@ namespace vmt_project.Controllers
                 }
 
                 var result = await _authenticationService.Register(request);
-                return Success(result.Data, result.Detail);
+                if (result.IsSuccess)
+                {
+                    return Success(result.Data, result.Detail);
+                }
+                return BadRequest(BuildErrorApiResult(result.Detail));
             }
             catch (Exception ex)
             {

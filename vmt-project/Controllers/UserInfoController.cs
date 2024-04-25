@@ -31,7 +31,11 @@ namespace vmt_project.Controllers
                 }
 
                 var result = await _userInfoService.Upsert(request);
-                return Success(result.Detail);
+                if (result.IsSuccess)
+                {
+                    return Success(result.Detail);
+                }
+                return BadRequest(BuildErrorApiResult(result.Detail));
 
             }
             catch (Exception ex)
