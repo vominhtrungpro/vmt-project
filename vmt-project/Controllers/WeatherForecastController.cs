@@ -58,7 +58,6 @@ namespace vmt_project.Controllers
                 {
                     return Ok(ex.Message);
                 }
-                return Ok();
 
             }
             catch (Exception ex)

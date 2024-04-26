@@ -174,6 +174,7 @@ namespace vmt_project.services.Implementations
             {
                 claims.Add(new Claim("FirstName", user.UserInfo.FirstName ?? string.Empty));
                 claims.Add(new Claim("LastName", user.UserInfo.LastName ?? string.Empty));
+                claims.Add(new Claim("AvatarUrl", user.UserInfo.AvatarUrl ?? string.Empty));
             }
 
             var roles = await _userManager.GetRolesAsync(user);
