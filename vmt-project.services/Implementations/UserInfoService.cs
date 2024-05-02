@@ -38,6 +38,11 @@ namespace vmt_project.services.Implementations
         public async Task<AppActionResult> Upsert(CreateUserInfoRequest request)
         {
             var result = new AppActionResult();
+            var userEntity = await _userManager.FindByIdAsync(request.UserId);
+            if (userEntity is null)
+            {
+                return result.BuildError("User not found!");
+            }
             var userInfoEntity = _userInfoRepository.FindBy(m => m.UserId == request.UserId).FirstOrDefault();
             if (userInfoEntity != null)
             {
