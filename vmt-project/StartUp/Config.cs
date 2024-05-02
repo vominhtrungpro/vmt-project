@@ -44,6 +44,7 @@ namespace vmt_project.StartUp
 
             var kafka = _configuration.GetSection("Kafka");
             GetAndSetConfig("KafkaBootstrapServers", kafka);
+            GetAndSetConfig("KafkaIsUsing", kafka);
         }
         private void GetAndSetConfig(string config,IConfigurationSection section)
         {
