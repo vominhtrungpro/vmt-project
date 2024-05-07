@@ -80,7 +80,27 @@ namespace vmt_project.services.Implementations
                         var user = await _userManager.FindByEmailAsync(userInfo.Email);
                         if (user == null)
                         {
-                            return result.BuildError(ERROR_LOGIN_USER_NOT_FOUND);
+                            var password = GenerateRandomPassword(null);
+                            var userEntity = new User()
+                            {
+                                Email = userInfo.Email,
+                                UserName = userInfo.Email,
+                            };
+                            var addUserResult = await _userManager.CreateAsync(userEntity, password);
+                            if (addUserResult.Succeeded)
+                            {
+                                var sendEmailRequest = new SendEmailRequest()
+                                {
+                                    To = userInfo.Email,
+                                    Subject = "Register",
+                                    Body = password
+                                };
+                                await _emailService.SendEmail(sendEmailRequest);
+                                user = userEntity;
+                            } else
+                            {
+                                return result.BuildError("Failed to create user!");
+                            }
                         }
                         var token = new LoginResponse()
                         {
