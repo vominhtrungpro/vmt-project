@@ -84,7 +84,7 @@ namespace vmt_project.services.Implementations
                             var userEntity = new User()
                             {
                                 Email = userInfo.Email,
-                                UserName = userInfo.Email,
+                                UserName = "User "+ new Random().Next(100000, 1000000).ToString(),
                             };
                             var addUserResult = await _userManager.CreateAsync(userEntity, password);
                             if (addUserResult.Succeeded)
