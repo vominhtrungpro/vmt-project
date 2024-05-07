@@ -20,6 +20,7 @@ namespace vmt_project.common.Constants
         public const string ERROR_REGISTER_USERNAME_EXIST = "Username exist!";
         public const string ERROR_REGISTER_USER = "Register error!";
         public const string ERROR_LOGIN_USER = "Login error!";
+        public const string ERROR_LOGIN_GOOGLE_USER = "Login google error!";
         public const string ERROR_LOGIN_USER_NOT_FOUND = "Username not found!";
         public const string ERROR_LOGIN_WRONG_PASSWORD = "Wrong password!";
         #endregion

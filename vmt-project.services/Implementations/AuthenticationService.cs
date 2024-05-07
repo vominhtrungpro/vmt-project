@@ -99,7 +99,7 @@ namespace vmt_project.services.Implementations
                                 user = userEntity;
                             } else
                             {
-                                return result.BuildError("Failed to create user!");
+                                return result.BuildError(ERROR_REGISTER_USER);
                             }
                         }
                         var token = new LoginResponse()
@@ -117,7 +117,7 @@ namespace vmt_project.services.Implementations
                 }
                 else
                 {
-                    return result.BuildError("Failed to login with google!");
+                    return result.BuildError(ERROR_LOGIN_GOOGLE_USER);
                 }
             }
         }
