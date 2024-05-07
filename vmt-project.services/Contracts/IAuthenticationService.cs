@@ -13,6 +13,7 @@ namespace vmt_project.services.Contracts
     public interface IAuthenticationService
     {
         Task<AppActionResultData<LoginResponse>> Login(LoginRequest request);
+        Task<AppActionResultData<LoginResponse>> LoginWithGooogle(LoginWithGoogleRequest request);
         Task<AppActionResultData<IdentityResult>> Register(RegisterRequest request);
     }
 }

@@ -1,7 +1,9 @@
 ﻿
+using Azure.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using NetCore.Infrastructure.Common.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -58,6 +60,45 @@ namespace vmt_project.services.Implementations
             catch (Exception ex)
             {
                 return result.BuildError(ex.Message);
+            }
+        }
+        public async Task<AppActionResultData<LoginResponse>> LoginWithGooogle(LoginWithGoogleRequest request)
+        {
+            var result = new AppActionResultData<LoginResponse>();
+            string userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", request.Token);
+
+                var response = await httpClient.GetAsync(userInfoEndpoint);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    try
+                    {
+                        GoogleUserInfoResponse userInfo = JsonConvert.DeserializeObject<GoogleUserInfoResponse>(jsonResponse);
+                        var user = await _userManager.FindByEmailAsync(userInfo.Email);
+                        if (user == null)
+                        {
+                            return result.BuildError(ERROR_LOGIN_USER_NOT_FOUND);
+                        }
+                        var token = new LoginResponse()
+                        {
+                            AccessToken = await CreateAccessTokenAsync(user),
+                            RefreshToken = await CreateRefreshTokenAsync(user)
+                        };
+                        result.BuildResult(token);
+                        return result;
+                    }
+                    catch (Exception ex)
+                    {
+                        return result.BuildError(ex.Message);
+                    }
+                }
+                else
+                {
+                    return result.BuildError("Failed to login with google!");
+                }
             }
         }
         public async Task<AppActionResultData<IdentityResult>> Register(RegisterRequest request)

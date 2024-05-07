@@ -49,6 +49,33 @@ namespace vmt_project.Controllers
             }
         }
         [HttpPost]
+        [Route("login-google")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] LoginWithGoogleRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ClientError(ModelState);
+                }
+
+                var result = await _authenticationService.LoginWithGooogle(request);
+                if (result.IsSuccess)
+                {
+                    return Success(result.Data, result.Detail);
+                }
+                return new OkObjectResult(BuildErrorApiResult(result.Detail));
+            }
+            catch (Exception ex)
+            {
+                return Success(ex.StackTrace);
+            }
+            finally
+            {
+            }
+        }
+        [HttpPost]
         [Route("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
