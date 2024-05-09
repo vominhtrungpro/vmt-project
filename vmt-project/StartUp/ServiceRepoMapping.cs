@@ -1,5 +1,6 @@
 ﻿using vmt_project.dal.Contracts;
 using vmt_project.dal.Implementations;
+using vmt_project.Hubs;
 using vmt_project.services.Contracts;
 using vmt_project.services.Implementations;
 using vmt_project.services.Kafka;
@@ -41,6 +42,8 @@ namespace vmt_project.StartUp
             builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
             builder.Services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             #endregion Repository Mapping
+
+
         }
     }
 }

@@ -132,12 +132,6 @@ namespace vmt_project.services.Implementations
                 {
                     return result.BuildError(ERROR_REGISTER_EMAIL_EXIST);
                 }
-                // check if username exist
-                var checkUserNameExist = _userManager.FindByNameAsync(request.UserName);
-                if (checkUserNameExist.Result != null)
-                {
-                    return result.BuildError(ERROR_REGISTER_USERNAME_EXIST);
-                }
                 // generate random password
                 var password = GenerateRandomPassword(null);
 

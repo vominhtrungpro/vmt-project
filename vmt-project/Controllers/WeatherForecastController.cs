@@ -1,6 +1,7 @@
-using Azure;
+﻿using Azure;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR.Client;
 using NetCore.Infrastructure.Api.Controller;
 using Newtonsoft.Json;
 using vmt_project.models.Request.User;
@@ -38,35 +39,30 @@ namespace vmt_project.Controllers
         [Route("test")]
         public async Task<IActionResult> Test()
         {
+            var hubUrl = "https://localhost:7130/message";
+
+            // Khởi tạo một kết nối Hub SignalR
+            var connection = new HubConnectionBuilder()
+                .WithUrl(hubUrl)
+                .Build();
+
             try
             {
-                var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+                // Bắt đầu kết nối
+                await connection.StartAsync();
+                Console.WriteLine("Connected to Hub.");
 
-                using var producer = new ProducerBuilder<Null, string>(config).Build();
-                try
-                {
-                    var response = await producer.ProduceAsync("weather",
-                    new Message<Null, string>
-                    {
-                        Value = "message"
-                    });
-                    Console.WriteLine(response.Value);
-                    return Ok(response.Value);
-
-                }
-                catch (ProduceException<Null, string> ex)
-                {
-                    return Ok(ex.Message);
-                }
-
+                // Gửi một tin nhắn tới Hub
+                await connection.SendAsync("SendMessage", "User", "Hello");
+                Console.WriteLine("Message sent to Hub.");
             }
             catch (Exception ex)
             {
-                return Success(ex.StackTrace);
+                Console.WriteLine($"Error: {ex.Message}");
             }
-            finally
-            {
-            }
+
+            await connection.StopAsync();
+            return Ok();
         }
     }
 }

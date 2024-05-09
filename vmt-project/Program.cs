@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RedisCache.Core;
@@ -8,6 +9,7 @@ using StackExchange.Redis;
 using System.Text;
 using vmt_project.dal.Models.Context;
 using vmt_project.dal.Models.Entities;
+using vmt_project.Hubs;
 using vmt_project.StartUp;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -97,6 +99,7 @@ builder.Services.AddIdentity<User, vmt_project.dal.Models.Entities.Role>(o =>
 
 new ServiceRepoMapping().Mapping(builder);
 
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -116,5 +119,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<MessageHub>("/message").RequireCors("default");
 
 app.Run();
