@@ -99,7 +99,24 @@ builder.Services.AddIdentity<User, vmt_project.dal.Models.Entities.Role>(o =>
 
 new ServiceRepoMapping().Mapping(builder);
 
-builder.Services.AddSignalR();
+builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
+        builder =>
+        {
+            builder.AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .SetIsOriginAllowed((host) => true)
+                   .AllowCredentials();
+        }));
+
+var sign_conn = Environment.GetEnvironmentVariable("SignalrConnectionString");
+if (sign_conn.IsNullOrEmpty())
+{
+    builder.Services.AddSignalR();
+}
+else 
+{
+    builder.Services.AddSignalR().AddAzureSignalR(sign_conn);
+}
 
 var app = builder.Build();
 
@@ -120,6 +137,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<MessageHub>("/message").RequireCors("default");
+app.UseCors("CorsPolicy");
+
+app.MapHub<MessageHub>("/message");
 
 app.Run();

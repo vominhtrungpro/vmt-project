@@ -7,7 +7,7 @@ namespace vmt_project.Hubs
     {
         public async Task SendMessage(HubMessage message)
         {
-            await Clients.All.SendAsync("Message", message);
+            await Clients.All.SendAsync("ReceiveMessage", message);
         }
     }
 }
