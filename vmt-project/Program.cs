@@ -100,11 +100,11 @@ builder.Services.AddIdentity<User, vmt_project.dal.Models.Entities.Role>(o =>
 new ServiceRepoMapping().Mapping(builder);
 
 var sign_conn = Environment.GetEnvironmentVariable("SignalrConnectionString");
-if (sign_conn.IsNullOrEmpty())
+if (sign_conn == "none" || sign_conn.IsNullOrEmpty())
 {
     builder.Services.AddSignalR();
 }
-else 
+else
 {
     builder.Services.AddSignalR().AddAzureSignalR(sign_conn);
 }
