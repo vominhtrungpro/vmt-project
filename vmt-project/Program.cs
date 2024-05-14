@@ -99,15 +99,6 @@ builder.Services.AddIdentity<User, vmt_project.dal.Models.Entities.Role>(o =>
 
 new ServiceRepoMapping().Mapping(builder);
 
-builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
-        builder =>
-        {
-            builder.AllowAnyHeader()
-                   .AllowAnyMethod()
-                   .SetIsOriginAllowed((host) => true)
-                   .AllowCredentials();
-        }));
-
 var sign_conn = Environment.GetEnvironmentVariable("SignalrConnectionString");
 if (sign_conn.IsNullOrEmpty())
 {
@@ -136,8 +127,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors("CorsPolicy");
 
 app.MapHub<MessageHub>("/message");
 
