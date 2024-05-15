@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 new Config(builder.Configuration).SetConfig();
 
-string sql_conn = Environment.GetEnvironmentVariable("ConnectionString");
+var sql_conn = Environment.GetEnvironmentVariable("ConnectionString");
 
 builder.Services.AddDbContext<VmtDbContext>(options =>
 {
@@ -98,6 +98,7 @@ builder.Services.AddIdentity<User, vmt_project.dal.Models.Entities.Role>(o =>
 new ServiceRepoMapping().Mapping(builder);
 
 var sign_conn = Environment.GetEnvironmentVariable("SignalrConnectionString");
+
 if (sign_conn == "none" || sign_conn.IsNullOrEmpty())
 {
     builder.Services.AddSignalR();
