@@ -5,9 +5,20 @@ namespace vmt_project.Hubs
 {
     public class MessageHub : Hub
     {
-        public async Task SendMessage(HubMessage message)
-        {
-            await Clients.All.SendAsync("ReceiveMessage", message);
-        }
+        //public async Task SendMessage(HubMessage message)
+        //{
+        //    try
+        //    {
+        //        await Clients.All.SendAsync("ReceiveMessage", message);
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
+        public Task SendMessage(HubMessage message) =>
+                Clients.All.SendAsync("ReceiveMessage", message);
+
     }
 }

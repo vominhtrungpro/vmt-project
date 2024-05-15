@@ -18,7 +18,6 @@ new Config(builder.Configuration).SetConfig();
 
 string sql_conn = Environment.GetEnvironmentVariable("ConnectionString");
 
-// Add services to the container.
 builder.Services.AddDbContext<VmtDbContext>(options =>
 {
     options.UseSqlServer(sql_conn);
@@ -32,7 +31,6 @@ builder.Services.AddRedisCache(options =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
@@ -106,18 +104,24 @@ if (sign_conn == "none" || sign_conn.IsNullOrEmpty())
 }
 else
 {
-    builder.Services.AddSignalR().AddAzureSignalR(sign_conn);
+    builder.Services.AddSignalR().AddAzureSignalR(options => { 
+        options.ConnectionString = sign_conn;
+    });
 }
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://localhost:3000", "https://white-bush-0e7e7d600.5.azurestaticapps.net")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials());
+});
+
 
 var app = builder.Build();
 
-app.UseCors(builder =>
-{
-    builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader();
-});
+app.UseCors("AllowSpecificOrigin");
 
 app.UseSwagger();
 app.UseSwaggerUI();
