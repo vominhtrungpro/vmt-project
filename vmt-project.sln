@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vmt-project.common", "vmt-p
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vmt-project.models", "vmt-project.models\vmt-project.models.csproj", "{8EE0671F-EA50-4861-8012-A95306FBF86C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vmt-project.kafka-consumer", "vmt-project.kafka-consumer\vmt-project.kafka-consumer.csproj", "{E07B4C55-E224-403C-B980-FA3087234388}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vmt-project.kafka-consumer", "vmt-project.kafka-consumer\vmt-project.kafka-consumer.csproj", "{E07B4C55-E224-403C-B980-FA3087234388}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vmt-project.cronjob-test", "ConsoleApp2\vmt-project.cronjob-test.csproj", "{0E443593-584B-4D4A-9851-677E75ACED40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{E07B4C55-E224-403C-B980-FA3087234388}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E07B4C55-E224-403C-B980-FA3087234388}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E07B4C55-E224-403C-B980-FA3087234388}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E443593-584B-4D4A-9851-677E75ACED40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E443593-584B-4D4A-9851-677E75ACED40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E443593-584B-4D4A-9851-677E75ACED40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E443593-584B-4D4A-9851-677E75ACED40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
