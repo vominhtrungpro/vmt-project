@@ -26,6 +26,7 @@ namespace vmt_project.StartUp
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUploadService, UploadService>();
             builder.Services.AddScoped<IUserInfoService, UserInfoService>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
             #endregion Service Mapping
 
             #region Redis Cahe Service Mapping
@@ -41,6 +42,7 @@ namespace vmt_project.StartUp
             #region Repository Mapping
             builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
             builder.Services.AddScoped<IUserInfoRepository, UserInfoRepository>();
+            builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
             #endregion Repository Mapping
 
 
