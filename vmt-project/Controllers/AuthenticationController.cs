@@ -9,6 +9,7 @@ using vmt_project.services.Contracts;
 using static NetCore.Infrastructure.Api.ApiResultHelper;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace vmt_project.Controllers
 {
@@ -93,6 +94,23 @@ namespace vmt_project.Controllers
                     return Success(result.Data, result.Detail);
                 }
                 return new OkObjectResult(BuildErrorApiResult(result.Detail));
+            }
+            catch (Exception ex)
+            {
+                return Success(ex.StackTrace);
+            }
+            finally
+            {
+            }
+        }
+        [HttpGet]
+        [Route("test")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Test()
+        {
+            try
+            {
+                return Success("Ok");
             }
             catch (Exception ex)
             {
