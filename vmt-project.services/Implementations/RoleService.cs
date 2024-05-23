@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using NetCore.Infrastructure.Common.Models;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using vmt_project.common.Helpers;
 using vmt_project.dal.Contracts;
 using vmt_project.dal.Models.Entities;
 using vmt_project.models.DTO.Role;

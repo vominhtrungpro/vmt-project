@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Infrastructure.Api.Controller;
+using vmt_project.common.Helpers;
 using vmt_project.models.Request.Role;
 using vmt_project.services.Contracts;
 using static NetCore.Infrastructure.Api.ApiResultHelper;
@@ -15,9 +16,11 @@ namespace vmt_project.Controllers
     public class RoleController : BaseController
     {
         private readonly IRoleService _roleService;
-        public RoleController(IRoleService roleService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public RoleController(IRoleService roleService,IHttpContextAccessor httpContextAccessor)
         {
             _roleService = roleService;  
+            _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
         public async Task<IActionResult> List()
@@ -70,6 +73,11 @@ namespace vmt_project.Controllers
         {
             try
             {
+                var currentRole = ClaimHelper.GetCurrentRole(_httpContextAccessor);
+                if (currentRole != "Super Admin")
+                {
+                    return Unauthorized();
+                }
                 if (!ModelState.IsValid)
                 {
                     return ClientError(ModelState);

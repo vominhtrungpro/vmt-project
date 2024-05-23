@@ -17,5 +17,9 @@ namespace vmt_project.common.Helpers
         {
             return context.HttpContext.User.Claims.First(x => x.Type == "UserId").Value;
         }
+        public static string GetCurrentRole(IHttpContextAccessor context)
+        {
+            return context.HttpContext.User.Claims.First(x => x.Type == "Role").Value;
+        }
     }
 }
