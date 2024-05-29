@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using vmt_project.dal.Models.Context;
 
@@ -11,9 +12,11 @@ using vmt_project.dal.Models.Context;
 namespace vmt_project.dal.Migrations
 {
     [DbContext(typeof(VmtDbContext))]
-    partial class VmtDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240528062219_table-myprofile")]
+    partial class tablemyprofile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,39 +178,6 @@ namespace vmt_project.dal.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MyProfile");
-                });
-
-            modelBuilder.Entity("vmt_project.dal.Models.Entities.MyProfilePicture", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("MyProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PictureUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MyProfileId");
-
-                    b.ToTable("MyProfilePicture");
                 });
 
             modelBuilder.Entity("vmt_project.dal.Models.Entities.Role", b =>
@@ -402,17 +372,6 @@ namespace vmt_project.dal.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("vmt_project.dal.Models.Entities.MyProfilePicture", b =>
-                {
-                    b.HasOne("vmt_project.dal.Models.Entities.MyProfile", "MyProfile")
-                        .WithMany("MyProfilePictures")
-                        .HasForeignKey("MyProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MyProfile");
-                });
-
             modelBuilder.Entity("vmt_project.dal.Models.Entities.UserInfo", b =>
                 {
                     b.HasOne("vmt_project.dal.Models.Entities.User", "User")
@@ -437,11 +396,6 @@ namespace vmt_project.dal.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("vmt_project.dal.Models.Entities.MyProfile", b =>
-                {
-                    b.Navigation("MyProfilePictures");
                 });
 
             modelBuilder.Entity("vmt_project.dal.Models.Entities.User", b =>

@@ -40,6 +40,8 @@ namespace vmt_project.dal.Models.Context
         #region DbSet
         public DbSet<Character> Characters { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
+        public DbSet<MyProfile> MyProfile { get; set; }
+        public DbSet<MyProfilePicture> MyProfilePicture { get; set; }
         #endregion
 
         #region Configuration & Navigation
@@ -66,6 +68,7 @@ namespace vmt_project.dal.Models.Context
                 .HasForeignKey<UserInfo>(ui => ui.UserId);
 
             builder.Entity<User>().Navigation(u => u.UserInfo).AutoInclude();
+            builder.Entity<MyProfile>().Navigation(e => e.MyProfilePictures).AutoInclude();
 
         }
         #endregion
