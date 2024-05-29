@@ -1,4 +1,5 @@
-﻿using NetCore.Infrastructure.Common.Models;
+﻿using Azure.Core;
+using NetCore.Infrastructure.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -120,6 +121,24 @@ namespace vmt_project.services.Implementations
                     .ToList();
 
                 return result.BuildResult(list);
+            }
+            catch (Exception ex)
+            {
+                return result.BuildError(ex.Message);
+            }
+        }
+        public async Task<AppActionResult> Delete(Guid id)
+        {
+            var result = new AppActionResult();
+            try
+            {
+                _myProfilePictureRepository.DeleteRange(_myProfilePictureRepository.FindBy(m => m.MyProfileId == id).ToList());
+                var myProfileEntity = _myProfileRepository.FindBy(m => m.Id == id).FirstOrDefault();
+                if (myProfileEntity != null)
+                {
+                    _myProfileRepository.Delete(myProfileEntity);
+                }
+                return result.BuildResult("Success!");
             }
             catch (Exception ex)
             {

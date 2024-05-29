@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Infrastructure.Api.Controller;
@@ -66,6 +67,27 @@ namespace vmt_project.Controllers
                     return ClientError(ModelState);
                 }
                 var result = await _myProfileService.Update(request);
+                return Success(null, result.Detail);
+            }
+            catch (Exception ex)
+            {
+                return Success(ex.StackTrace);
+            }
+            finally
+            {
+            }
+        }
+        [HttpDelete]
+        [Route("/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ClientError(ModelState);
+                }
+                var result = await _myProfileService.Delete(id);
                 return Success(null, result.Detail);
             }
             catch (Exception ex)

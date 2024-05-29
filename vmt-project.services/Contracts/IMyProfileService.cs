@@ -14,5 +14,6 @@ namespace vmt_project.services.Contracts
         Task<AppActionResult> Create(CreateMyProfileRequest request);
         Task<AppActionResult> Update(UpdateMyProfileRequest request);
         Task<AppActionResultData<List<MyProfileDto>>> List();
+        Task<AppActionResult> Delete(Guid id);
     }
 }
