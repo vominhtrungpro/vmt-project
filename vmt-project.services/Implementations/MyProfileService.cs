@@ -33,6 +33,7 @@ namespace vmt_project.services.Implementations
                     Id = Guid.NewGuid(),
                     Name = request.Name,
                     Slug = request.Slug,
+                    Order = request.Order,
                     Content = request.Content
                 };
                 myProfile.SetCreatedInfo("");
@@ -73,6 +74,7 @@ namespace vmt_project.services.Implementations
                     myProfileEntity.Name = request.Name;
                     myProfileEntity.Slug = request.Slug;
                     myProfileEntity.Content = request.Content;
+                    myProfileEntity.Order = request.Order;
                     myProfileEntity.SetModifiedInfo("");
                     _myProfileRepository.Edit(myProfileEntity);
                     if (request.PictureUrls.Count > 0)
@@ -105,12 +107,14 @@ namespace vmt_project.services.Implementations
             {
                 var list = _myProfileRepository
                     .GetAll()
+                    .OrderBy(m => m.Order)
                     .Select(m => new MyProfileDto
                     {
                         Id = m.Id,
                         Slug = m.Slug,
                         Name = m.Name,
                         Content = m.Content,
+                        Order = m.Order,
                         PictureUrls = m.MyProfilePictures.Select(p => p.PictureUrl).ToList()
                     })
                     .ToList();

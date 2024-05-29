@@ -11,6 +11,7 @@ namespace vmt_project.models.Request.MyProfile
         public string Slug { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }
+        public int Order { get; set; }
         public List<string> PictureUrls { get; set; }
     }
 }
