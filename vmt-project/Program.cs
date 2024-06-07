@@ -20,9 +20,19 @@ var sql_conn = Environment.GetEnvironmentVariable("ConnectionString");
 
 builder.Services.AddDbContext<VmtDbContext>(options =>
 {
-    options.UseSqlServer(sql_conn);
+    options.UseSqlServer(sql_conn,sqlServerOptionsAction: sqlOptions => 
+    {
+        sqlOptions.EnableRetryOnFailure
+        (
+            maxRetryCount:5,
+            maxRetryDelay: TimeSpan.FromSeconds(30), 
+            errorNumbersToAdd: null
+        );
+    });
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
 });
+
 
 builder.Services.AddRedisCache(options =>
 {
