@@ -53,5 +53,31 @@ namespace vmt_project.Controllers
             {
             }
         }
+        [HttpPost]
+        [Route("call-back")]
+        public async Task<IActionResult> CallBack([FromBody] CallBackRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ClientError(ModelState);
+                }
+                CreateCharacterRequest createCharacterRequest = new CreateCharacterRequest()
+                {
+                    Name = JsonConvert.SerializeObject(request)
+
+                };
+                var result = await _characterService.Create(createCharacterRequest);
+                return Success(null, result.Detail);
+            }
+            catch (Exception ex)
+            {
+                return Success(ex.StackTrace);
+            }
+            finally
+            {
+            }
+        }
     }
 }
