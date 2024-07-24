@@ -30,10 +30,10 @@ namespace vmt_project.services.Implementations
                 var character = new Character
                 {
                     Id = Guid.NewGuid(),
-                    Name = request.Name,
-                    CreatedOn = DateTime.UtcNow,
-                    CreatedBy = "Admin",
+                    Name = request.Name
                 };
+                character.SetCreatedInfo("Admin");
+                character.SetModifiedInfo("Admin");
                 _characterRepository.Add(character);
             }
             catch (Exception ex)

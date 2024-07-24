@@ -26,7 +26,7 @@ public class Worker : BackgroundService
             _sleepingTime = int.Parse(sleepingTime);
         }
     }
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         Console.WriteLine($"[{DateTime.UtcNow}]---START CRONJOB---");
         while (true)
@@ -35,7 +35,7 @@ public class Worker : BackgroundService
             {
                 var userCount = _cronjobService.CountUser();
                 Console.WriteLine($"NOW is [{DateTime.UtcNow}], num of users is {userCount}");
-                Thread.Sleep(_sleepingTime * 10000);
+                Thread.Sleep(_sleepingTime);
             }
             catch (Exception)
             {

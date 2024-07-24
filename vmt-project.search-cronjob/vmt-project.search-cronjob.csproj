@@ -1,22 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>vmt_project.search_cronjob</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />
-    <PackageReference Include="NEST" Version="7.17.5" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\vmt-project.dal\vmt-project.dal.csproj" />
     <ProjectReference Include="..\vmt-project.services\vmt-project.services.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="Settings.job">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+
 </Project>
