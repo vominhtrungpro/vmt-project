@@ -14,7 +14,8 @@ namespace vmt_project.cronjob_search
     {
         private readonly int _sleepingTime;
         private readonly ICronjobService _cronjobService;
-        public Worker(ICronjobService cronjobService)
+        private readonly ElasticClient _elasticClient;
+        public Worker(ICronjobService cronjobService, ElasticClient elasticClient)
         {
             _cronjobService = cronjobService;
             var sleepingTime = Environment.GetEnvironmentVariable("CronJobSettings:SleepingTime");
@@ -26,15 +27,16 @@ namespace vmt_project.cronjob_search
             {
                 _sleepingTime = int.Parse(sleepingTime);
             }
+            _elasticClient = elasticClient;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine($"[{DateTime.UtcNow}]---START SEARCH CRONJOB---");
-            var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
-                .DefaultIndex("character-index")
-                .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
+            //var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
+            //    .DefaultIndex("character-index")
+            //    .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
 
-            var client = new ElasticClient(settings);
+            //var client = new ElasticClient(settings);
             var lastRunTime = DateTime.MinValue;
             while (true)
             {
@@ -43,7 +45,7 @@ namespace vmt_project.cronjob_search
                     var characters = await _cronjobService.ElasticSearchCharacter(lastRunTime);
                     foreach (var character in characters) 
                     {
-                        var indexResponse = await client.IndexDocumentAsync(character);
+                        var indexResponse = await _elasticClient.IndexDocumentAsync(character);
                         if (!indexResponse.IsValid)
                         {
                             Console.WriteLine($"Error indexing user {character.Id}: {indexResponse.ServerError}");

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nest;
 using vmt_project.cronjob_search;
 using vmt_project.dal.Contracts;
 using vmt_project.dal.Implementations;
@@ -41,8 +42,17 @@ builder.ConfigureServices((context, services) =>
         o.Password.RequireNonAlphanumeric = false;
         o.User.RequireUniqueEmail = true;
     })
-.AddEntityFrameworkStores<VmtDbContext>()
-.AddDefaultTokenProviders();
+    .AddEntityFrameworkStores<VmtDbContext>()
+    .AddDefaultTokenProviders();
+
+    // move value to env
+    var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
+        .DefaultIndex("character-index")
+        .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
+
+    var client = new ElasticClient(settings);
+
+    services.AddSingleton(client);
 });
 
 var host = builder.Build();
