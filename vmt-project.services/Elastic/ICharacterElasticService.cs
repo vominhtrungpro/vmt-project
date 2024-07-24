@@ -10,5 +10,7 @@ namespace vmt_project.services.Elastic
     public interface ICharacterElasticService
     {
         Task<Character> GetCharacterById(string id);
+        Task<bool> BulkInsert(List<Character> characters);
+        Task<bool> Insert(Character character);
     }
 }

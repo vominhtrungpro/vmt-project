@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using vmt_project.dal.Models.Entities;
 using vmt_project.services.Contracts;
+using vmt_project.services.Elastic;
 
 namespace vmt_project.cronjob_search
 {
@@ -15,7 +16,8 @@ namespace vmt_project.cronjob_search
         private readonly int _sleepingTime;
         private readonly ICronjobService _cronjobService;
         private readonly ElasticClient _elasticClient;
-        public Worker(ICronjobService cronjobService, ElasticClient elasticClient)
+        private readonly ICharacterElasticService _characterElasticService;
+        public Worker(ICronjobService cronjobService, ElasticClient elasticClient,ICharacterElasticService characterElasticService)
         {
             _cronjobService = cronjobService;
             var sleepingTime = Environment.GetEnvironmentVariable("CronJobSettings:SleepingTime");
@@ -28,27 +30,28 @@ namespace vmt_project.cronjob_search
                 _sleepingTime = int.Parse(sleepingTime);
             }
             _elasticClient = elasticClient;
+            _characterElasticService = characterElasticService;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine($"[{DateTime.UtcNow}]---START SEARCH CRONJOB---");
-            //var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
-            //    .DefaultIndex("character-index")
-            //    .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
-
-            //var client = new ElasticClient(settings);
             var lastRunTime = DateTime.MinValue;
             while (true)
             {
                 try
                 {
                     var characters = await _cronjobService.ElasticSearchCharacter(lastRunTime);
+                    var indexResponses = await _characterElasticService.BulkInsert(characters);
+                    if (!indexResponses)
+                    {
+                        Console.WriteLine($"Error indexing character!");
+                    }
                     foreach (var character in characters) 
                     {
-                        var indexResponse = await _elasticClient.IndexDocumentAsync(character);
-                        if (!indexResponse.IsValid)
+                        var indexResponse = await _characterElasticService.Insert(character);
+                        if (!indexResponse)
                         {
-                            Console.WriteLine($"Error indexing user {character.Id}: {indexResponse.ServerError}");
+                            Console.WriteLine($"Error indexing character!");
                         }
                         if (lastRunTime < character.ModifiedOn)
                         {

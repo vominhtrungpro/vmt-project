@@ -14,19 +14,26 @@ namespace vmt_project.services.Elastic.Base
         {
             _elasticClient = elasticClient;
         }
-        public async Task<string> CreateDocumentAsync(T document)
+        public async Task<bool> CreateDocumentAsync(T document)
         {
-            throw new NotImplementedException();
+            var response = await _elasticClient.IndexDocumentAsync(document);
+            return response.IsValid ? true : false;
+        }
+        public async Task<bool> UpdateDocumentAsync(T document)
+        {
+            var response = await _elasticClient.UpdateAsync(new DocumentPath<T>(document), u => u.Doc(document).RetryOnConflict(3));
+            return response.IsValid ? true : false;
+        }
+        public async Task<bool> DeleteDocumentAsync(string id)
+        {
+            var response = await _elasticClient.DeleteAsync(new DocumentPath<T>(id));
+            return response.IsValid ? true : false;
         }
 
-        public async Task<string> DeleteDocumentAsync(T document)
+        public async Task<List<T>> GetAllDocumentAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<T>> GetAllDocument()
-        {
-            throw new NotImplementedException();
+            var response = await _elasticClient.SearchAsync<T>(s => s.MatchAll());
+            return response.Documents.ToList();
         }
 
         public async Task<T> GetDocumentAsync(string id)
@@ -34,10 +41,10 @@ namespace vmt_project.services.Elastic.Base
             var response = await _elasticClient.GetAsync<T>(id);
             return response.Source;
         }
-
-        public async Task<string> UpdateDocument(T document)
+        public async Task<bool> BulkInsertDocumentAsync(List<T> documents)
         {
-            throw new NotImplementedException();
+            var response = await _elasticClient.IndexManyAsync<T>(documents);
+            return response.IsValid ? true : false;
         }
     }
 }

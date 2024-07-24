@@ -20,5 +20,13 @@ namespace vmt_project.services.Elastic
             var character = await _genericElasticService.GetDocumentAsync(id);
             return character;
         }
+        public async Task<bool> BulkInsert(List<Character> characters)
+        {
+            return await _genericElasticService.BulkInsertDocumentAsync(characters);
+        }
+        public async Task<bool> Insert(Character character)
+        {
+            return await _genericElasticService.CreateDocumentAsync(character);
+        }
     }
 }

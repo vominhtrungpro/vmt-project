@@ -8,10 +8,11 @@ namespace vmt_project.services.Elastic.Base
 {
     public interface IGenericElasticService<T>
     {
-        Task<string> CreateDocumentAsync(T document);
+        Task<bool> CreateDocumentAsync(T document);
+        Task<bool> UpdateDocumentAsync(T document);
         Task<T> GetDocumentAsync(string id);
-        Task<List<T>> GetAllDocument();
-        Task<string> UpdateDocument(T document);
-        Task<string> DeleteDocumentAsync(T document);
+        Task<List<T>> GetAllDocumentAsync();
+        Task<bool> DeleteDocumentAsync(string document);
+        Task<bool> BulkInsertDocumentAsync(List<T> documents);
     }
 }

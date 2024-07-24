@@ -9,6 +9,8 @@ using vmt_project.dal.Implementations;
 using vmt_project.dal.Models.Context;
 using vmt_project.dal.Models.Entities;
 using vmt_project.services.Contracts;
+using vmt_project.services.Elastic.Base;
+using vmt_project.services.Elastic;
 using vmt_project.services.Implementations;
 
 var builder = new HostBuilder();
@@ -34,6 +36,10 @@ builder.ConfigureServices((context, services) =>
 
     services.AddScoped<ICharacterRepository, CharacterRepository>();
 
+    services.AddScoped<ICharacterElasticService, CharacterElasticService>();
+
+    services.AddScoped<IGenericElasticService<Character>, GenericElasticService<Character>>();
+
     services.AddIdentity<User, Role>(o =>
     {
         o.Password.RequireDigit = false;
@@ -48,7 +54,8 @@ builder.ConfigureServices((context, services) =>
     // move value to env
     var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
         .DefaultIndex("character-index")
-        .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
+        .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l")
+        .EnableApiVersioningHeader();
 
     var client = new ElasticClient(settings);
 
