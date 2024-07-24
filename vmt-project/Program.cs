@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Nest;
 using RedisCache.Core;
 using StackExchange.Redis;
 using System.Text;
 using vmt_project.dal.Models.Context;
 using vmt_project.dal.Models.Entities;
 using vmt_project.Hubs;
+using vmt_project.services.Elastic;
 using vmt_project.StartUp;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -121,6 +123,13 @@ builder.Services.AddCors(options =>
                           .AllowCredentials());
 });
 
+var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
+    .DefaultIndex("character-index")
+    .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
+
+var client = new ElasticClient(settings);
+
+builder.Services.AddSingleton(client);
 
 var app = builder.Build();
 

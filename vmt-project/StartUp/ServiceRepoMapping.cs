@@ -1,7 +1,10 @@
 ﻿using vmt_project.dal.Contracts;
 using vmt_project.dal.Implementations;
+using vmt_project.dal.Models.Entities;
 using vmt_project.Hubs;
 using vmt_project.services.Contracts;
+using vmt_project.services.Elastic;
+using vmt_project.services.Elastic.Base;
 using vmt_project.services.Implementations;
 using vmt_project.services.Kafka;
 using vmt_project.services.Kafka.Base;
@@ -48,7 +51,10 @@ namespace vmt_project.StartUp
             builder.Services.AddScoped<IMyProfilePictureRepository, MyProfilePictureRepository>();
             #endregion Repository Mapping
 
-
+            #region Elastic Service Mapping
+            builder.Services.AddScoped<ICharacterElasticService, CharacterElasticService>();
+            builder.Services.AddScoped<IGenericElasticService<Character>, GenericElasticService<Character>>();
+            #endregion Elastic Service Mapping
         }
     }
 }

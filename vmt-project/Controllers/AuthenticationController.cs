@@ -17,6 +17,7 @@ using vmt_project.dal.Contracts;
 using System.Data.Entity;
 using vmt_project.dal.Implementations;
 using System.Reflection.Metadata;
+using vmt_project.services.Elastic;
 
 namespace vmt_project.Controllers
 {
@@ -25,11 +26,11 @@ namespace vmt_project.Controllers
     public class AuthenticationController : BaseController
     {
         private readonly IAuthenticationService _authenticationService;
-        private readonly ICharacterRepository _repo;
-        public AuthenticationController(IAuthenticationService authenticationService, ICharacterRepository repo)
+        private readonly ICharacterElasticService _characterElasticService;
+        public AuthenticationController(IAuthenticationService authenticationService, ICharacterElasticService characterElasticService)
         {
             _authenticationService = authenticationService;
-            _repo = repo;
+            _characterElasticService = characterElasticService;
         }
         [HttpPost]
         [Route("login")]
@@ -119,24 +120,17 @@ namespace vmt_project.Controllers
         {
             try
             {
-                var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
-    .DefaultIndex("character-index")
-    .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
+                //var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
+                //    .DefaultIndex("character-index")
+                //    .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
 
-                var client = new ElasticClient(settings);
+                //var client = new ElasticClient(settings);
 
-                var searchResponse = client.Search<Character>(s => s
-    .Query(q => q
-        .Match(m => m
-            .Field(f => f.Name)
-            .Query(text)
-        )
-    )
-);
+                //var searchResponse = client.Search<Character>(s => s.Query(q => q.Match(m => m.Field(f => f.Name).Query(text))));
 
+                var result = await _characterElasticService.GetCharacterById(text);
 
-
-                return Success(searchResponse.Documents);
+                return Success(result);
             }
             catch (Exception ex)
             {
