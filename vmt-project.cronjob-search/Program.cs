@@ -52,9 +52,8 @@ builder.ConfigureServices((context, services) =>
     .AddDefaultTokenProviders();
 
     // move value to env
-    var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
+    var settings = new ConnectionSettings(new Uri("https://vmt-project-elastic.azurewebsites.net/"))
         .DefaultIndex("character-index")
-        .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l")
         .EnableApiVersioningHeader();
 
     var client = new ElasticClient(settings);

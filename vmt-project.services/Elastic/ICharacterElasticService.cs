@@ -12,5 +12,6 @@ namespace vmt_project.services.Elastic
         Task<Character> GetCharacterById(string id);
         Task<bool> BulkInsert(List<Character> characters);
         Task<bool> Insert(Character character);
+        Task<List<Character>> GetAll();
     }
 }

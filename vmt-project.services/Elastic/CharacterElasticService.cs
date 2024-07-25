@@ -28,5 +28,10 @@ namespace vmt_project.services.Elastic
         {
             return await _genericElasticService.CreateDocumentAsync(character);
         }
+        public async Task<List<Character>> GetAll()
+        {
+            return await _genericElasticService.GetAllDocumentAsync();
+        }
     }
+
 }

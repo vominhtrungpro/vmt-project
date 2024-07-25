@@ -124,8 +124,8 @@ namespace vmt_project.Controllers
         {
             try
             {
-                _logger.LogInformation(text);
-                return Ok();
+                var chars = await _characterElasticService.GetAll();
+                return Success(chars);
             }
             catch (Exception ex)
             {

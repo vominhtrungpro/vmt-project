@@ -28,6 +28,11 @@ new ServiceRepoMapping().Init(builder);
 
 builder.Logging.AddAzureWebAppDiagnostics();
 
+builder.Services.Configure<AzureBlobLoggerOptions>(opts =>
+{
+    opts.BlobName = "log.txt";
+});
+
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
