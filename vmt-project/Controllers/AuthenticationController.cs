@@ -28,11 +28,13 @@ namespace vmt_project.Controllers
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly ICharacterElasticService _characterElasticService;
+        private readonly ILogger<AuthenticationController> _logger;
 
-        public AuthenticationController(IAuthenticationService authenticationService, ICharacterElasticService characterElasticService)
+        public AuthenticationController(IAuthenticationService authenticationService, ICharacterElasticService characterElasticService, ILogger<AuthenticationController> logger)
         {
             _authenticationService = authenticationService;
             _characterElasticService = characterElasticService;
+            _logger = logger;
         }
         [HttpPost]
         [Route("login")]
@@ -122,6 +124,7 @@ namespace vmt_project.Controllers
         {
             try
             {
+                _logger.LogInformation(text);
                 return Ok();
             }
             catch (Exception ex)

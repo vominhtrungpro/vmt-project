@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.ApplicationInsights;
+using Microsoft.Extensions.Logging.AzureAppServices;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -24,6 +25,8 @@ new Config(builder.Configuration).SetConfig();
 new ServiceRepoMapping().Mapping(builder);
 
 new ServiceRepoMapping().Init(builder);
+
+builder.Logging.AddAzureWebAppDiagnostics();
 
 var app = builder.Build();
 
