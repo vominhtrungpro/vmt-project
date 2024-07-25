@@ -18,6 +18,7 @@ using System.Data.Entity;
 using vmt_project.dal.Implementations;
 using System.Reflection.Metadata;
 using vmt_project.services.Elastic;
+using Serilog;
 
 namespace vmt_project.Controllers
 {
@@ -27,6 +28,7 @@ namespace vmt_project.Controllers
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly ICharacterElasticService _characterElasticService;
+
         public AuthenticationController(IAuthenticationService authenticationService, ICharacterElasticService characterElasticService)
         {
             _authenticationService = authenticationService;
@@ -120,17 +122,7 @@ namespace vmt_project.Controllers
         {
             try
             {
-                //var settings = new ConnectionSettings(new Uri("https://c1e26596e2114447af4c0f0224e4a5de.eastus2.azure.elastic-cloud.com/"))
-                //    .DefaultIndex("character-index")
-                //    .BasicAuthentication("elastic", "LmKZuwze4VkJotLKRTtqbo2l");
-
-                //var client = new ElasticClient(settings);
-
-                //var searchResponse = client.Search<Character>(s => s.Query(q => q.Match(m => m.Field(f => f.Name).Query(text))));
-
-                var result = await _characterElasticService.GetCharacterById(text);
-
-                return Success(result);
+                return Ok();
             }
             catch (Exception ex)
             {
