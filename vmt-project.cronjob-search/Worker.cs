@@ -41,28 +41,37 @@ namespace vmt_project.cronjob_search
                 try
                 {
                     var characters = await _cronjobService.ElasticSearchCharacter(lastRunTime);
-                    var indexResponses = await _characterElasticService.BulkInsert(characters);
-                    if (!indexResponses)
+                    if (characters.Count > 0)
                     {
-                        Console.WriteLine($"Error indexing character!");
-                    }
-                    foreach (var character in characters) 
-                    {
-                        var indexResponse = await _characterElasticService.Insert(character);
-                        if (!indexResponse)
+                        var indexResponses = await _characterElasticService.BulkInsert(characters);
+                        if (!indexResponses)
                         {
                             Console.WriteLine($"Error indexing character!");
                         }
-                        if (lastRunTime < character.ModifiedOn)
+                        foreach (var character in characters)
                         {
-                            lastRunTime = character.ModifiedOn ?? DateTime.Now;
+                            var indexResponse = await _characterElasticService.Insert(character);
+                            if (!indexResponse)
+                            {
+                                Console.WriteLine($"Error indexing character!");
+                            }
+                            if (lastRunTime < character.ModifiedOn)
+                            {
+                                lastRunTime = character.ModifiedOn ?? DateTime.Now;
+                            }
                         }
+                        Console.WriteLine($"Success index " + characters.Count.ToString() + " characters!");
                     }
-                    Console.WriteLine($"Success index "+characters.Count.ToString()+" characters!");
+                    else
+                    {
+                        Console.WriteLine($"No character to index!");
+                    }
+
                     Thread.Sleep(_sleepingTime * 1000);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Console.WriteLine(ex);
                 }
             }
         }

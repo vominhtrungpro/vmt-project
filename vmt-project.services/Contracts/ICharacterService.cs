@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using vmt_project.models.DTO.Character;
 using vmt_project.models.Request.Character;
+using vmt_project.models.Response.Character;
 
 namespace vmt_project.services.Contracts
 {
@@ -13,5 +14,6 @@ namespace vmt_project.services.Contracts
     {
         Task<AppActionResult> Create(CreateCharacterRequest request);
         Task<AppActionResultData<List<CharacterDto>>> List();
+        Task<AppActionResultData<SearchCharacterResult>> Search(SearchCharacterRequest request);
     }
 }

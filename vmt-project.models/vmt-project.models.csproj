@@ -11,6 +11,7 @@
     <PackageReference Include="Autofac" Version="8.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
+    <PackageReference Include="IppDotNetSdkForQuickBooksApiV3" Version="14.6.3.7" />
     <PackageReference Include="LinqKit" Version="1.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
@@ -26,6 +27,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\vmt-project.dal\vmt-project.dal.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NetCore.Infrastructure.Common">
+      <HintPath>..\..\..\SimplyBlast\originv2\simplyblast-web\lib\Backend\Core\NetCore.Infrastructure.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -27,13 +27,13 @@ namespace vmt_project.Controllers
     public class AuthenticationController : BaseController
     {
         private readonly IAuthenticationService _authenticationService;
-        private readonly ICharacterElasticService _characterElasticService;
+        private readonly ICharacterService _characterService;
         private readonly ILogger<AuthenticationController> _logger;
 
-        public AuthenticationController(IAuthenticationService authenticationService, ICharacterElasticService characterElasticService, ILogger<AuthenticationController> logger)
+        public AuthenticationController(IAuthenticationService authenticationService, ICharacterService characterService, ILogger<AuthenticationController> logger)
         {
             _authenticationService = authenticationService;
-            _characterElasticService = characterElasticService;
+            _characterService = characterService;
             _logger = logger;
         }
         [HttpPost]
@@ -124,8 +124,7 @@ namespace vmt_project.Controllers
         {
             try
             {
-                var chars = await _characterElasticService.GetAll();
-                return Success(chars);
+                return Success(text);
             }
             catch (Exception ex)
             {
