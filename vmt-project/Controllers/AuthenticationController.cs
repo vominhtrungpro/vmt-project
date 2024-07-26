@@ -19,6 +19,7 @@ using vmt_project.dal.Implementations;
 using System.Reflection.Metadata;
 using vmt_project.services.Elastic;
 using Serilog;
+using vmt_project.services.OpenAI;
 
 namespace vmt_project.Controllers
 {
@@ -29,12 +30,14 @@ namespace vmt_project.Controllers
         private readonly IAuthenticationService _authenticationService;
         private readonly ICharacterService _characterService;
         private readonly ILogger<AuthenticationController> _logger;
+        private readonly IChatOpenAIService _chatOpenAIService;
 
-        public AuthenticationController(IAuthenticationService authenticationService, ICharacterService characterService, ILogger<AuthenticationController> logger)
+        public AuthenticationController(IAuthenticationService authenticationService, ICharacterService characterService, ILogger<AuthenticationController> logger, IChatOpenAIService chatOpenAIService)
         {
             _authenticationService = authenticationService;
             _characterService = characterService;
             _logger = logger;
+            _chatOpenAIService = chatOpenAIService;
         }
         [HttpPost]
         [Route("login")]
@@ -124,7 +127,8 @@ namespace vmt_project.Controllers
         {
             try
             {
-                return Success(text);
+                var result = await _chatOpenAIService.FunctionCalling(text);
+                return Success(result);
             }
             catch (Exception ex)
             {

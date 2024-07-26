@@ -17,6 +17,7 @@ using vmt_project.services.Elastic.Base;
 using vmt_project.services.Implementations;
 using vmt_project.services.Kafka;
 using vmt_project.services.Kafka.Base;
+using vmt_project.services.OpenAI;
 using vmt_project.services.Redis;
 using vmt_project.services.Redis.Base;
 
@@ -64,6 +65,10 @@ namespace vmt_project.StartUp
             builder.Services.AddScoped<ICharacterElasticService, CharacterElasticService>();
             builder.Services.AddScoped<IGenericElasticService<Character>, GenericElasticService<Character>>();
             #endregion Elastic Service Mapping
+
+            #region OpenAI Service Mapping
+            builder.Services.AddScoped<IChatOpenAIService, ChatOpenAIService>();
+            #endregion OpenAI Service Mapping
         }
 
         public void Init(WebApplicationBuilder builder)
@@ -194,6 +199,7 @@ namespace vmt_project.StartUp
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddAuthorization();
+            builder.Services.AddHttpClient();
         }
     }
 }

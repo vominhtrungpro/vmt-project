@@ -48,6 +48,10 @@ namespace vmt_project.StartUp
 
             var signalr = _configuration.GetSection("Signalr");
             GetAndSetConfig("SignalrConnectionString",signalr);
+
+            var openai = _configuration.GetSection("OpenAI");
+            GetAndSetConfig("ApiKey", openai);
+            GetAndSetConfig("AssistantId", openai);
         }
         private void GetAndSetConfig(string config,IConfigurationSection section)
         {

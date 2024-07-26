@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Infrastructure.Api.Controller;
 using Newtonsoft.Json;
+using vmt_project.common.Helpers;
 using vmt_project.models.Request.User;
 using vmt_project.services.Contracts;
 using static NetCore.Infrastructure.Api.ApiResultHelper;
@@ -15,9 +16,11 @@ namespace vmt_project.Controllers
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
+            _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
         [Route("{id}")]
@@ -50,7 +53,7 @@ namespace vmt_project.Controllers
                 {
                     return ClientError(ModelState);
                 }
-
+                request.UserId = ClaimHelper.GetCurrentUserId(_httpContextAccessor);
                 var result = await _userService.ChangePasswordUserAsync(request);
                 if (result.IsSuccess)
                 {
