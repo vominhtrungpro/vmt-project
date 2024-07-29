@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
@@ -38,6 +39,58 @@ namespace vmt_project.models.OpenAI
 
         public Usage? usage { get; set; }
     }
+    public class MessgeResponse
+    {
+        [JsonProperty("object")]
+        public string Object { get; set; }
+        
+        public List<MessageData> data { get; set; }
+        public string first_id { get; set; }
+        public string last_id { get; set; }
+        public bool has_more { get; set; }
+    }
+    public class MessageData
+    {
+        public string id { get; set; }
+
+        [JsonProperty("object")]
+        public string Object { get; set; }
+        public long created_at { get; set; }
+        public object assistant_id { get; set; }
+        public string thread_id { get; set; }
+
+        public object run_id { get; set; }
+
+        public string role { get; set; }
+
+        public List<Content> content { get; set; }
+
+        public List<object> attachments { get; set; }
+
+        public Metadata metadata { get; set; }
+    }
+    public class Content
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("text")]
+        public Text Text { get; set; }
+    }
+    public class Metadata
+    {
+    }
+
+
+    public class Text
+    {
+        [JsonProperty("value")]
+        public string Value { get; set; }
+
+        [JsonProperty("annotations")]
+        public List<object> Annotations { get; set; }
+    }
+
 
     public class Choice
     {

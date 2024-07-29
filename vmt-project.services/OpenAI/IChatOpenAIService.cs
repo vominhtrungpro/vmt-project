@@ -10,5 +10,6 @@ namespace vmt_project.services.OpenAI
     public interface IChatOpenAIService
     {
         Task<FunctionCallingResponse> FunctionCalling(string text);
+        Task<MessgeResponse> AssistantChat(string msg,string threadId);
     }
 }

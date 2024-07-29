@@ -123,11 +123,11 @@ namespace vmt_project.Controllers
         [HttpPost]
         [Route("test")]
         [AllowAnonymous]
-        public async Task<IActionResult> Test(string text)
+        public async Task<IActionResult> Test(string? text,string? threadId)
         {
             try
             {
-                var result = await _chatOpenAIService.FunctionCalling(text);
+                var result = await _chatOpenAIService.AssistantChat(text,threadId);
                 return Success(result);
             }
             catch (Exception ex)
