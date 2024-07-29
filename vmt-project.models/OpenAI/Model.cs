@@ -153,7 +153,4 @@ namespace vmt_project.models.OpenAI
         public Dictionary<string, object>? properties { get; set; }
         public List<string>? required { get; set; }
     }
-
-
-
 }

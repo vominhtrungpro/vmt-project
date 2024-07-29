@@ -10,7 +10,7 @@ namespace vmt_project.common.Constants
     {
         #region Success Messages
         public const string SUCCESS_CREATE_CHARACTER = "Character created!";
-        public const string SUCCESS_REGISTER_USER = "Register success!";
+        public const string SUCCESS_REGISTER_USER = "Register success, check email for password!";
         public const string SUCCESS_LOGIN_USER = "Login success!";
         #endregion
 

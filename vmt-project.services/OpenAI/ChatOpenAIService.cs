@@ -15,6 +15,7 @@ using vmt_project.models.Request.Character;
 using vmt_project.models.OpenAI;
 using vmt_project.services.Contracts;
 using Newtonsoft.Json;
+using vmt_project.models.Request.Authentication;
 
 
 namespace vmt_project.services.OpenAI
@@ -25,11 +26,13 @@ namespace vmt_project.services.OpenAI
         private readonly string apiKey = Environment.GetEnvironmentVariable("ApiKey");
         private readonly string assistantId = Environment.GetEnvironmentVariable("AssistantId");
         private readonly ICharacterService _characterService;
+        private readonly IAuthenticationService _authenticationService;
 
-        public ChatOpenAIService(HttpClient httpClient, ICharacterService characterService)
+        public ChatOpenAIService(HttpClient httpClient, ICharacterService characterService, IAuthenticationService authenticationService)
         {
             _httpClient = httpClient;
             _characterService = characterService;
+            _authenticationService = authenticationService;
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
             _httpClient.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
@@ -224,6 +227,12 @@ namespace vmt_project.services.OpenAI
             var result = await _characterService.Create(character);
             return JsonConvert.SerializeObject(result);
         }
+        private async Task<string> RegisterAccount(string email, string username)
+        {
+            var register = new RegisterRequest { Email = email, UserName = username };
+            var result = await _authenticationService.Register(register);
+            return JsonConvert.SerializeObject(result);
+        }
         private List<Tool> InitTool()
         {
             var tools = new List<Tool>();
@@ -260,9 +269,40 @@ namespace vmt_project.services.OpenAI
                     }
                 }
             });
+            tools.Add(new Tool()
+            {
+                type = "function",
+                function = new Function()
+                {
+                    name = "register_account",
+                    description = "Create or register a new account",
+                    parameters = new Parameters()
+                    {
+                        type = "object",
+                        properties = new Dictionary<string, object>()
+                        {
+                            {
+                                "username", new Dictionary<string, string>
+                                {
+                                    { "type", "string" },
+                                    { "description", "Username of account." }
+                                }
+                            },
+                            {
+                               "email", new Dictionary<string, string>
+                                {
+                                    { "type", "string" },
+                                    { "description", "Email of account." }
+                                }
+                            },
+                        },
+                        required = new List<string> { "username", "email" }
+                    }
+                }
+            });
             return tools;
 
-    }
+        }
         private async Task<string> GetResponseFromToolCall(ToolCall toolCall)
         {
             var functionName = toolCall.function.name;
@@ -276,6 +316,12 @@ namespace vmt_project.services.OpenAI
             {
                 var name = functionArgs["name"]?.ToString();
                 funcResponse = await CreateACharacter(name);
+            }
+            if (functionName == "register_account")
+            {
+                var email = functionArgs["email"]?.ToString();
+                var userName = functionArgs["username"]?.ToString();
+                funcResponse = await RegisterAccount(email, userName);
             }
             return funcResponse;
         }
