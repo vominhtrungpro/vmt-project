@@ -16,6 +16,11 @@ using vmt_project.models.OpenAI;
 using vmt_project.services.Contracts;
 using Newtonsoft.Json;
 using vmt_project.models.Request.Authentication;
+using vmt_project.models.Request.Campaign;
+using NetCore.Infrastructure.Common.Models;
+using vmt_project.common.Constants;
+using StackExchange.Redis;
+using System.Security.Policy;
 
 
 namespace vmt_project.services.OpenAI
@@ -233,6 +238,29 @@ namespace vmt_project.services.OpenAI
             var result = await _authenticationService.Register(register);
             return JsonConvert.SerializeObject(result);
         }
+        private async Task<string> CreateCampaign(CreateCampaignRequest request)
+        {
+            string url = "https://app-simplyblast-api-qa-sea.azurewebsites.net/api/Campaign";
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
+
+
+                var json = JsonConvert.SerializeObject(request);
+                httpRequest.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                httpRequest.Headers.Add("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyTmFtZSI6InRlbmFudGFkbWluMiIsIlVzZXJJZCI6ImU2MTJjYzZhLTkwNWMtNDU0Yy1hODA2LWEzYTAzOTUyY2I1NyIsIkZpcnN0TmFtZSI6IlRlbmFudCIsIkxhc3ROYW1lIjoiQWRtaW4gMiIsIkVtYWlsIjoidGVuYW50YWRtaW4yQHlvcG1haWwuY29tIiwiVGVuYW50SWQiOiJiOGQ4NjZiMS05NGY1LTRlNjktMWM4Ny0wOGRjMWIxZTNiMTciLCJ0b2tlbkV4cGlyZVRpbWUiOiI2Mzg1Nzk2NjY0MzA5OTAwMTgiLCJyZWZyZXNoRXhwaXJlVGltZSI6IjYzODU4NTExNDQzMDk5MDI2MiIsIlJvbGUiOiJUZW5hbnQgQWRtaW4iLCJXYWJhVHlwZSI6Ik1FVEFfRElSRUNUIiwiZXhwIjoxNzIyMzEzNDQzLCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo3MjcxLyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzEvIn0.AbRxJm93d13XMbgXY7i5p6AJSwkGq_fWOVJja_3V58Q");
+
+                HttpResponseMessage response = await client.SendAsync(httpRequest);
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResult = JsonConvert.DeserializeObject<AppApiResult>(content);
+
+                return JsonConvert.SerializeObject(apiResult);
+            }
+
+        }
         private List<Tool> InitTool()
         {
             var tools = new List<Tool>();
@@ -300,6 +328,129 @@ namespace vmt_project.services.OpenAI
                     }
                 }
             });
+            tools.Add(new Tool()
+            {
+                type = "function",
+                function = new Function()
+                {
+                    name = "create_campaign",
+                    description = "Create a new campaign",
+                    parameters = new Parameters()
+                    {
+                        type = "object",
+                        properties = new Dictionary<string, object>()
+                        {
+                            {
+                                "Name", new Dictionary<string, string>
+                                {
+                                    { "type", "string" },
+                                    { "description", "Name of campaign." }
+                                }
+                            },
+                            {
+                               "IsEnableTwoWay", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Is boolean of campaign can enable two way, example: 'True' or 'False'." }
+                               }
+                            },
+                            {
+                               "IsBypassUnsubBlock", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Is boolean of campaign can bypass unsub block, example: 'True' or 'False'." }
+                               }
+                            },
+                            {
+                               "RecipientIsUnconfirmed", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Is boolean of campaign recipient is unconfirmed, example: 'True' or 'False'." }
+                               }
+                            },
+                            {
+                               "RecipientIsSubscribe", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Is boolean of campaign recipient is subscribe, example: 'True' or 'False'." }
+                               }
+                            },
+                            {
+                               "RecipientIsUnsubscribe", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Is boolean of campaign recipient is unsubscribe, example: 'True' or 'False'." }
+                               }
+                            },
+                            {
+                               "RecipientTagFilters", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "A list of tag guid separated by a comma, example: '1817631c-aa37-438d-82ed-f941e45d257a','1817631c-aa37-438d-82ed-f941e45d257f,'1817631c-aa37-438d-82ed-f941e45d257d''" }
+                               }
+                            },
+                            {
+                               "MessageId", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "A guid of message example: 'db291242-f120-45d3-b8ac-e1b749e1448b'" }
+                               }
+                            },
+                            {
+                               "MessageIsInitialize", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Is boolean of message an initialize message, example: 'True' or 'False'." }
+                               }
+                            },
+                            {
+                               "MessageName", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Name of message." }
+                               }
+                            },
+                            {
+                               "MessageContent", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Content of message." }
+                               }
+                            },
+                            {
+                               "MessageTemplateId", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "A guid of message template example: 'be291a03-7f9b-4b97-983a-57e40212c4b1'." }
+                               }
+                            },
+                            {
+                               "MessageBroadcastSchedule", new Dictionary<string, string>
+                               {
+                                    { "type", "string" },
+                                    { "description", "Schedule of campaign broadcast require UTC time, example: '2024-07-30T02:27:29.2318442'" }
+                               }
+                            },
+                        },
+                        required = new List<string> 
+                        { 
+                            "Name", 
+                            "IsEnableTwoWay", 
+                            "IsBypassUnsubBlock",
+                            "RecipientIsUnconfirmed", 
+                            "RecipientIsSubscribe", 
+                            "RecipientIsUnsubscribe", 
+                            "RecipientTagFilters", 
+                            "MessageId", 
+                            "MessageIsInitialize", 
+                            "MessageName", 
+                            "MessageContent", 
+                            "MessageTemplateId", 
+                            "MessageBroadcastSchedule" 
+                        }
+                    }
+                }
+            });
             return tools;
 
         }
@@ -322,6 +473,37 @@ namespace vmt_project.services.OpenAI
                 var email = functionArgs["email"]?.ToString();
                 var userName = functionArgs["username"]?.ToString();
                 funcResponse = await RegisterAccount(email, userName);
+            }
+            if (functionName == "create_campaign")
+            {
+                var request = new CreateCampaignRequest()
+                {
+                    Name = functionArgs["Name"]?.ToString(),
+                    IsEnableTwoWay = Convert.ToBoolean(functionArgs["IsEnableTwoWay"]?.ToString()),
+                    IsBypassUnsubBlock = Convert.ToBoolean(functionArgs["IsBypassUnsubBlock"]?.ToString()),
+                    Status = common.Enums.CampaignStatus.Pending,
+                    EmailNotify = null,
+                    RecipientRequest = new CampaignRecipientRequest()
+                    {
+                        IsUnconfirmed = Convert.ToBoolean(functionArgs["RecipientIsUnconfirmed"]?.ToString()),
+                        IsSubscribe = Convert.ToBoolean(functionArgs["RecipientIsSubscribe"]?.ToString()),
+                        IsUnsubscribe = Convert.ToBoolean(functionArgs["RecipientIsUnsubscribe"]?.ToString()),
+                        TagFilters = new List<string>(functionArgs["RecipientTagFilters"]?.ToString().Split(','))
+                    },
+                    MessageRequests = new List<CampaignMessageRequest>()
+                    {
+                        new CampaignMessageRequest()
+                        { 
+                            Id = Guid.Parse(functionArgs["MessageId"]?.ToString()),
+                            IsInitialize = Convert.ToBoolean(functionArgs["MessageIsInitialize"]?.ToString()),
+                            Name = functionArgs["MessageName"]?.ToString(),
+                            Content = functionArgs["MessageContent"]?.ToString(),
+                            TemplateId = Guid.Parse(functionArgs["MessageTemplateId"]?.ToString()),
+                            BroadcastSchedule = DateTime.Parse(functionArgs["MessageBroadcastSchedule"]?.ToString()),
+                        }
+                    },
+                };
+                funcResponse = await CreateCampaign(request);
             }
             return funcResponse;
         }
