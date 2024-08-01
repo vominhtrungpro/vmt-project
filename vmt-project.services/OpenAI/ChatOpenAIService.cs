@@ -246,10 +246,11 @@ namespace vmt_project.services.OpenAI
             {
                 HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
 
+                var jwtToken = await GetJwtToken();
 
                 var json = JsonConvert.SerializeObject(request);
                 httpRequest.Content = new StringContent(json, Encoding.UTF8, "application/json");
-                httpRequest.Headers.Add("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyTmFtZSI6InRlbmFudGFkbWluMiIsIlVzZXJJZCI6ImU2MTJjYzZhLTkwNWMtNDU0Yy1hODA2LWEzYTAzOTUyY2I1NyIsIkZpcnN0TmFtZSI6IlRlbmFudCIsIkxhc3ROYW1lIjoiQWRtaW4gMiIsIkVtYWlsIjoidGVuYW50YWRtaW4yQHlvcG1haWwuY29tIiwiVGVuYW50SWQiOiJiOGQ4NjZiMS05NGY1LTRlNjktMWM4Ny0wOGRjMWIxZTNiMTciLCJ0b2tlbkV4cGlyZVRpbWUiOiI2Mzg1Nzk2NjY0MzA5OTAwMTgiLCJyZWZyZXNoRXhwaXJlVGltZSI6IjYzODU4NTExNDQzMDk5MDI2MiIsIlJvbGUiOiJUZW5hbnQgQWRtaW4iLCJXYWJhVHlwZSI6Ik1FVEFfRElSRUNUIiwiZXhwIjoxNzIyMzEzNDQzLCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo3MjcxLyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzEvIn0.AbRxJm93d13XMbgXY7i5p6AJSwkGq_fWOVJja_3V58Q");
+                httpRequest.Headers.Add("Authorization", "Bearer "+jwtToken);
 
                 HttpResponseMessage response = await client.SendAsync(httpRequest);
 
@@ -261,6 +262,61 @@ namespace vmt_project.services.OpenAI
             }
 
         }
+        private async Task<string> GetTemplates()
+        {
+            string url = "https://app-simplyblast-api-qa-sea.azurewebsites.net/api/template";
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
+
+                var jwtToken = await GetJwtToken();
+
+                httpRequest.Headers.Add("Authorization", "Bearer " + jwtToken);
+
+                HttpResponseMessage response = await client.SendAsync(httpRequest);
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResult = JsonConvert.DeserializeObject<AppApiResult>(content);
+
+                return JsonConvert.SerializeObject(apiResult);
+            }
+        }
+        private async Task<string> GetJwtToken()
+        {
+            string url = "https://app-simplyblast-api-qa-sea.azurewebsites.net/api/auth/login";
+            string accessToken = "";
+            using (HttpClient client = new HttpClient())
+            {
+                HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
+
+                var request = new
+                {
+                    email = "tenantadmin2@yopmail.com",
+                    password = "Password@123"
+                };
+                var json = JsonConvert.SerializeObject(request);
+                httpRequest.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.SendAsync(httpRequest);
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                using JsonDocument document = JsonDocument.Parse(content);
+                JsonElement root = document.RootElement;
+
+                if (root.TryGetProperty("data", out JsonElement dataElement) &&
+                    dataElement.TryGetProperty("accessToken", out JsonElement accessTokenElement))
+                {
+                    accessToken = accessTokenElement.GetString();
+                    Console.WriteLine($"Access Token: {accessToken}");
+                }
+
+
+                return accessToken;
+            }
+        }
         private List<Tool> InitTool()
         {
             var tools = new List<Tool>();
@@ -271,6 +327,15 @@ namespace vmt_project.services.OpenAI
                 {
                     name = "get_all_character",
                     description = "Get the name of all character"
+                }
+            });
+            tools.Add(new Tool()
+            {
+                type = "function",
+                function = new Function()
+                {
+                    name = "get_templates",
+                    description = "Get all template data"
                 }
             });
             tools.Add(new Tool()
@@ -421,7 +486,7 @@ namespace vmt_project.services.OpenAI
                                "MessageTemplateId", new Dictionary<string, string>
                                {
                                     { "type", "string" },
-                                    { "description", "A guid of message template example: 'be291a03-7f9b-4b97-983a-57e40212c4b1'." }
+                                    { "description", "A guid of message template example: 'be291a03-7f9b-4b97-983a-57e40212c4b1' or you can get templateId from datas with get_templates function" }
                                }
                             },
                             {
@@ -473,6 +538,10 @@ namespace vmt_project.services.OpenAI
                 var email = functionArgs["email"]?.ToString();
                 var userName = functionArgs["username"]?.ToString();
                 funcResponse = await RegisterAccount(email, userName);
+            }
+            if (functionName == "get_templates")
+            {
+                funcResponse = await GetTemplates();
             }
             if (functionName == "create_campaign")
             {
