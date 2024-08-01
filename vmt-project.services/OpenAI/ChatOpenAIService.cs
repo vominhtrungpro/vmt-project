@@ -32,6 +32,8 @@ namespace vmt_project.services.OpenAI
         private readonly string assistantId = Environment.GetEnvironmentVariable("AssistantId");
         private readonly ICharacterService _characterService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly string openAiBaseUrl = "https://api.openai.com/v1";
+        private readonly string sbBaseUrl = "https://app-simplyblast-api-qa-sea.azurewebsites.net/api";
 
         public ChatOpenAIService(HttpClient httpClient, ICharacterService characterService, IAuthenticationService authenticationService)
         {
@@ -112,7 +114,7 @@ namespace vmt_project.services.OpenAI
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
 
-            HttpResponseMessage response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+            HttpResponseMessage response = await _httpClient.PostAsync(openAiBaseUrl+"/chat/completions", content);
 
 
             response.EnsureSuccessStatusCode();
@@ -151,7 +153,7 @@ namespace vmt_project.services.OpenAI
 
             while (true)
             {
-                string runUrl = $"https://api.openai.com/v1/threads/{threadId}/runs/{runId}";
+                string runUrl = $"{openAiBaseUrl}/threads/{threadId}/runs/{runId}";
                 HttpResponseMessage runResponse = await _httpClient.GetAsync(runUrl);
 
                 runResponse.EnsureSuccessStatusCode();
@@ -176,7 +178,7 @@ namespace vmt_project.services.OpenAI
                 }
             }
 
-            string msgUrl = $"https://api.openai.com/v1/threads/{threadId}/messages";
+            string msgUrl = $"{openAiBaseUrl}/threads/{threadId}/messages";
             HttpResponseMessage messageResponse = await _httpClient.GetAsync(msgUrl);
 
             messageResponse.EnsureSuccessStatusCode();
@@ -208,7 +210,7 @@ namespace vmt_project.services.OpenAI
             string json = JsonConvert.SerializeObject(request, settings);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var url = $"https://api.openai.com/v1/threads/{threadId}/runs/{runId}/submit_tool_outputs";
+            var url = $"{openAiBaseUrl}/threads/{threadId}/runs/{runId}/submit_tool_outputs";
             HttpResponseMessage response = await _httpClient.PostAsync(url, content);
 
 
@@ -226,21 +228,52 @@ namespace vmt_project.services.OpenAI
 
             return JsonConvert.SerializeObject(characters);
         }
-        private async Task<string> CreateACharacter(string name)
+        private async Task<string> CreateACharacter(Dictionary<string,string> functionArgs)
         {
+            var name = functionArgs["name"]?.ToString();
             var character = new CreateCharacterRequest { Name = name };
             var result = await _characterService.Create(character);
             return JsonConvert.SerializeObject(result);
         }
-        private async Task<string> RegisterAccount(string email, string username)
+        private async Task<string> RegisterAccount(Dictionary<string, string> functionArgs)
         {
-            var register = new RegisterRequest { Email = email, UserName = username };
+            var email = functionArgs["email"]?.ToString();
+            var userName = functionArgs["username"]?.ToString();
+            var register = new RegisterRequest { Email = email, UserName = userName };
             var result = await _authenticationService.Register(register);
             return JsonConvert.SerializeObject(result);
         }
-        private async Task<string> CreateCampaign(CreateCampaignRequest request)
+        private async Task<string> CreateCampaign(Dictionary<string,string> functionArgs)
         {
-            string url = "https://app-simplyblast-api-qa-sea.azurewebsites.net/api/Campaign";
+            var request = new CreateCampaignRequest()
+            {
+                Name = functionArgs["Name"]?.ToString(),
+                IsEnableTwoWay = Convert.ToBoolean(functionArgs["IsEnableTwoWay"]?.ToString()),
+                IsBypassUnsubBlock = Convert.ToBoolean(functionArgs["IsBypassUnsubBlock"]?.ToString()),
+                Status = common.Enums.CampaignStatus.Pending,
+                EmailNotify = null,
+                RecipientRequest = new CampaignRecipientRequest()
+                {
+                    IsUnconfirmed = Convert.ToBoolean(functionArgs["RecipientIsUnconfirmed"]?.ToString()),
+                    IsSubscribe = Convert.ToBoolean(functionArgs["RecipientIsSubscribe"]?.ToString()),
+                    IsUnsubscribe = Convert.ToBoolean(functionArgs["RecipientIsUnsubscribe"]?.ToString()),
+                    TagFilters = new List<string>(functionArgs["RecipientTagFilters"]?.ToString().Split(','))
+                },
+                MessageRequests = new List<CampaignMessageRequest>()
+                    {
+                        new CampaignMessageRequest()
+                        {
+                            Id = Guid.Parse(functionArgs["MessageId"]?.ToString()),
+                            IsInitialize = Convert.ToBoolean(functionArgs["MessageIsInitialize"]?.ToString()),
+                            Name = functionArgs["MessageName"]?.ToString(),
+                            Content = functionArgs["MessageContent"]?.ToString(),
+                            TemplateId = Guid.Parse(functionArgs["MessageTemplateId"]?.ToString()),
+                            BroadcastSchedule = DateTime.Parse(functionArgs["MessageBroadcastSchedule"]?.ToString()),
+                        }
+                    },
+            };
+
+            string url = $"{sbBaseUrl}/Campaign";
 
             using (HttpClient client = new HttpClient())
             {
@@ -264,7 +297,7 @@ namespace vmt_project.services.OpenAI
         }
         private async Task<string> GetTemplates()
         {
-            string url = "https://app-simplyblast-api-qa-sea.azurewebsites.net/api/template";
+            string url = $"{sbBaseUrl}/template";
 
             using (HttpClient client = new HttpClient())
             {
@@ -285,7 +318,7 @@ namespace vmt_project.services.OpenAI
         }
         private async Task<string> GetJwtToken()
         {
-            string url = "https://app-simplyblast-api-qa-sea.azurewebsites.net/api/auth/login";
+            string url = $"{sbBaseUrl}/auth/login";
             string accessToken = "";
             using (HttpClient client = new HttpClient())
             {
@@ -524,20 +557,18 @@ namespace vmt_project.services.OpenAI
             var functionName = toolCall.function.name;
             var functionArgs = JsonConvert.DeserializeObject<Dictionary<string, string>>(toolCall.function.arguments);
             var funcResponse = "";
+
             if (functionName == "get_all_character")
             {
                 funcResponse = await GetAllCharacter();
             }
             if (functionName == "create_a_character")
             {
-                var name = functionArgs["name"]?.ToString();
-                funcResponse = await CreateACharacter(name);
+                funcResponse = await CreateACharacter(functionArgs);
             }
             if (functionName == "register_account")
             {
-                var email = functionArgs["email"]?.ToString();
-                var userName = functionArgs["username"]?.ToString();
-                funcResponse = await RegisterAccount(email, userName);
+                funcResponse = await RegisterAccount(functionArgs);
             }
             if (functionName == "get_templates")
             {
@@ -545,34 +576,7 @@ namespace vmt_project.services.OpenAI
             }
             if (functionName == "create_campaign")
             {
-                var request = new CreateCampaignRequest()
-                {
-                    Name = functionArgs["Name"]?.ToString(),
-                    IsEnableTwoWay = Convert.ToBoolean(functionArgs["IsEnableTwoWay"]?.ToString()),
-                    IsBypassUnsubBlock = Convert.ToBoolean(functionArgs["IsBypassUnsubBlock"]?.ToString()),
-                    Status = common.Enums.CampaignStatus.Pending,
-                    EmailNotify = null,
-                    RecipientRequest = new CampaignRecipientRequest()
-                    {
-                        IsUnconfirmed = Convert.ToBoolean(functionArgs["RecipientIsUnconfirmed"]?.ToString()),
-                        IsSubscribe = Convert.ToBoolean(functionArgs["RecipientIsSubscribe"]?.ToString()),
-                        IsUnsubscribe = Convert.ToBoolean(functionArgs["RecipientIsUnsubscribe"]?.ToString()),
-                        TagFilters = new List<string>(functionArgs["RecipientTagFilters"]?.ToString().Split(','))
-                    },
-                    MessageRequests = new List<CampaignMessageRequest>()
-                    {
-                        new CampaignMessageRequest()
-                        { 
-                            Id = Guid.Parse(functionArgs["MessageId"]?.ToString()),
-                            IsInitialize = Convert.ToBoolean(functionArgs["MessageIsInitialize"]?.ToString()),
-                            Name = functionArgs["MessageName"]?.ToString(),
-                            Content = functionArgs["MessageContent"]?.ToString(),
-                            TemplateId = Guid.Parse(functionArgs["MessageTemplateId"]?.ToString()),
-                            BroadcastSchedule = DateTime.Parse(functionArgs["MessageBroadcastSchedule"]?.ToString()),
-                        }
-                    },
-                };
-                funcResponse = await CreateCampaign(request);
+                funcResponse = await CreateCampaign(functionArgs);
             }
             return funcResponse;
         }
@@ -602,7 +606,7 @@ namespace vmt_project.services.OpenAI
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
 
-            HttpResponseMessage response = await _httpClient.PostAsync("https://api.openai.com/v1/threads/runs", content);
+            HttpResponseMessage response = await _httpClient.PostAsync(openAiBaseUrl+"/threads/runs", content);
 
 
             response.EnsureSuccessStatusCode();
@@ -626,7 +630,7 @@ namespace vmt_project.services.OpenAI
             string json = JsonConvert.SerializeObject(request, settings);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var msgUrl = $"https://api.openai.com/v1/threads/{threadId}/messages";
+            var msgUrl = $"{openAiBaseUrl}/threads/{threadId}/messages";
 
             HttpResponseMessage response = await _httpClient.PostAsync(msgUrl, content);
 
@@ -647,7 +651,7 @@ namespace vmt_project.services.OpenAI
 
             HttpContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            var requestUrl = $"https://api.openai.com/v1/threads/{threadId}/runs";
+            var requestUrl = $"{openAiBaseUrl}/threads/{threadId}/runs";
 
             HttpResponseMessage response = await _httpClient.PostAsync(requestUrl, content);
 
@@ -675,7 +679,7 @@ namespace vmt_project.services.OpenAI
 
             HttpContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            var requestUrl = $"https://api.openai.com/v1/assistants/{assistantId}";
+            var requestUrl = $"{openAiBaseUrl}/assistants/{assistantId}";
 
             HttpResponseMessage response = await _httpClient.PostAsync(requestUrl, content);
 
