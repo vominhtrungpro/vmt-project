@@ -44,7 +44,8 @@ namespace vmt_project.Controllers
                 {
                     return ClientError(ModelState);
                 }
-                var result = await _characterService.Create(request);
+                //var result = await _characterService.Create(request);
+                var result = await _characterService.DapperCreate(request);
                 return Success(null, result.Detail);
             }
             catch (Exception ex)

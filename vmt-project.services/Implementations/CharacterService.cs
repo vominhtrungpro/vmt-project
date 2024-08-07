@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Dapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Nest;
@@ -6,10 +7,13 @@ using NetCore.Infrastructure.Common.Helpers;
 using NetCore.Infrastructure.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using vmt_project.dal.Base;
 using vmt_project.dal.Contracts;
+using vmt_project.dal.Dapper;
 using vmt_project.dal.Models.Entities;
 using vmt_project.models.DTO.Character;
 using vmt_project.models.Request.Character;
@@ -25,10 +29,12 @@ namespace vmt_project.services.Implementations
     {
         private readonly ICharacterRepository _characterRepository;
         private readonly ElasticClient _elasticClient;
-        public CharacterService(ICharacterRepository characterRepository,ElasticClient elasticClient)
+        private readonly ICharacterDapperRepository _characterDapperRepository;
+        public CharacterService(ICharacterRepository characterRepository,ElasticClient elasticClient, ICharacterDapperRepository characterDapperRepository)
         {
             _characterRepository = characterRepository;
             _elasticClient = elasticClient;
+            _characterDapperRepository = characterDapperRepository;
         }
         public async Task<AppActionResult> Create(CreateCharacterRequest request)
         {
@@ -114,6 +120,27 @@ namespace vmt_project.services.Implementations
             {
                 return result.BuildError(ex.ToString());
             }
+        }
+        public async Task<AppActionResult> DapperCreate(CreateCharacterRequest request)
+        {
+            var result = new AppActionResult();
+            var character = new Character
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Name
+            };
+            character.SetCreatedInfo("Admin");
+            character.SetModifiedInfo("Admin");
+            try
+            {
+                string tableName = _characterRepository.GetTableName();
+                _characterDapperRepository.Insert(character, tableName);
+            }
+            catch (Exception ex)
+            {
+                return result.BuildError(ex.Message);
+            }
+            return result.BuildResult(SUCCESS_CREATE_CHARACTER);
         }
         private SearchDescriptor<Character> Filters(SearchDescriptor<Character> searchDescriptor, IList<Filter> filters)
         {

@@ -268,7 +268,7 @@ namespace vmt_project.services.OpenAI
                             Name = functionArgs["MessageName"]?.ToString(),
                             Content = functionArgs["MessageContent"]?.ToString(),
                             TemplateId = Guid.Parse(functionArgs["MessageTemplateId"]?.ToString()),
-                            BroadcastSchedule = DateTime.Parse(functionArgs["MessageBroadcastSchedule"]?.ToString()),
+                            BroadcastSchedule = DateTimeOffset.Parse(functionArgs["MessageBroadcastSchedule"]?.ToString()).UtcDateTime,
                         }
                     },
             };
@@ -526,7 +526,7 @@ namespace vmt_project.services.OpenAI
                                "MessageBroadcastSchedule", new Dictionary<string, string>
                                {
                                     { "type", "string" },
-                                    { "description", "Schedule of campaign broadcast require UTC time, example: '2024-07-30T02:27:29.2318442'" }
+                                    { "description", "Schedule of campaign broadcast require with offset, example: '2024-07-30T02:27:29.2318442+07:00'" }
                                }
                             },
                         },

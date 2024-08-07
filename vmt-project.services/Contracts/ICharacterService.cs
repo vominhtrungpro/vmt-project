@@ -15,5 +15,6 @@ namespace vmt_project.services.Contracts
         Task<AppActionResult> Create(CreateCharacterRequest request);
         Task<AppActionResultData<List<CharacterDto>>> List();
         Task<AppActionResultData<SearchCharacterResult>> Search(SearchCharacterRequest request);
+        Task<AppActionResult> DapperCreate(CreateCharacterRequest request);
     }
 }

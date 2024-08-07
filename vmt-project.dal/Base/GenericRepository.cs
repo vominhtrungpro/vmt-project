@@ -293,6 +293,10 @@ namespace vmt_project.dal.Base
         {
             _context.ChangeTracker.Clear();
         }
+        public string GetTableName()
+        {
+            return _context.Model.FindEntityType(typeof(TEntity)).GetTableName();
+        }
         #endregion
     }
 }

@@ -7,6 +7,7 @@ using Nest;
 using RedisCache.Core;
 using System.Text;
 using vmt_project.dal.Contracts;
+using vmt_project.dal.Dapper;
 using vmt_project.dal.Implementations;
 using vmt_project.dal.Models.Context;
 using vmt_project.dal.Models.Entities;
@@ -69,6 +70,10 @@ namespace vmt_project.StartUp
             #region OpenAI Service Mapping
             builder.Services.AddScoped<IChatOpenAIService, ChatOpenAIService>();
             #endregion OpenAI Service Mapping
+
+            #region Dapper Service Mapping
+            builder.Services.AddScoped<ICharacterDapperRepository, CharacterDapperRepository>();
+            #endregion Dapper Service Mapping
         }
 
         public void Init(WebApplicationBuilder builder)

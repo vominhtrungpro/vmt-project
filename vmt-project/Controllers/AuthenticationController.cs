@@ -127,8 +127,26 @@ namespace vmt_project.Controllers
         {
             try
             {
-                var result = await _chatOpenAIService.AssistantChat(text,threadId);
-                return Success(result);
+                //var result = await _chatOpenAIService.AssistantChat(text,threadId);
+                DateTimeOffset dateTimeWithOffset = new DateTimeOffset(2024, 7, 30, 2, 27, 29, 231, TimeSpan.FromHours(7));
+
+                // Chuyển đổi thành chuỗi theo định dạng mặc định
+                string defaultFormat = dateTimeWithOffset.ToString();
+                Console.WriteLine("Default Format: " + defaultFormat);
+
+                // Chuyển đổi thành chuỗi theo định dạng chuẩn
+                string standardFormat = dateTimeWithOffset.ToString("o"); // Định dạng "o" (round-trip)
+                Console.WriteLine("Standard Format (o): " + standardFormat);
+
+                // Chuyển đổi thành chuỗi theo định dạng tùy chỉnh
+                string customFormat = dateTimeWithOffset.ToString("yyyy-MM-dd HH:mm:ss zzz");
+
+                DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(customFormat);
+
+                DateTime utcDateTime = dateTimeOffset.UtcDateTime;
+
+
+                return Success(customFormat);
             }
             catch (Exception ex)
             {

@@ -61,5 +61,6 @@ namespace vmt_project.dal.Base
         Task BulkInsert(IList<T> entities, CancellationToken cancellationToken);
         Task BulkUpdate(IList<T> entities, CancellationToken cancellationToken);
         Task BulkSaveChangesAsync(CancellationToken cancellationToken);
+        string GetTableName();
     }
 }

@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="EFCore.BulkExtensions" Version="8.0.2" />
     <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
     <PackageReference Include="LinqKit" Version="1.2.5" />
