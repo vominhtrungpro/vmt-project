@@ -10,6 +10,8 @@ namespace vmt_project.common.Constants
     {
         #region Success Messages
         public const string SUCCESS_CREATE_CHARACTER = "Character created!";
+        public const string SUCCESS_UPDATE_CHARACTER = "Character updated!";
+        public const string SUCCESS_DELETE_CHARACTER = "Character deleted!";
         public const string SUCCESS_REGISTER_USER = "Register success, check email for password!";
         public const string SUCCESS_LOGIN_USER = "Login success!";
         #endregion
@@ -23,6 +25,7 @@ namespace vmt_project.common.Constants
         public const string ERROR_LOGIN_GOOGLE_USER = "Login google error!";
         public const string ERROR_LOGIN_USER_NOT_FOUND = "Username not found!";
         public const string ERROR_LOGIN_WRONG_PASSWORD = "Wrong password!";
+        public const string ERROR_CHARACTER_NOT_EXIST = "Character not exist!";
         #endregion
     }
 }

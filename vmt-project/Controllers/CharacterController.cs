@@ -35,6 +35,24 @@ namespace vmt_project.Controllers
             {
             }
         }
+        [HttpGet]
+        [Route("{Id}")]
+        public async Task<IActionResult> Get(Guid Id)
+        {
+            try
+            {
+                var result = await _characterService.Get_Dapper(Id);
+                return Success(result.Data, result.Detail);
+
+            }
+            catch (Exception ex)
+            {
+                return Success(ex.StackTrace);
+            }
+            finally
+            {
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCharacterRequest request)
         {
@@ -44,8 +62,57 @@ namespace vmt_project.Controllers
                 {
                     return ClientError(ModelState);
                 }
-                //var result = await _characterService.Create(request);
-                var result = await _characterService.DapperCreate(request);
+                if (request.IsUsingDapper)
+                {
+                    var result = await _characterService.Create_Dapper(request);
+                    return Success(null, result.Detail);
+                }
+                else
+                {
+                    var result = await _characterService.Create(request);
+                    return Success(null, result.Detail);
+                }   
+            }
+            catch (Exception ex)
+            {
+                return Success(ex.StackTrace);
+            }
+            finally
+            {
+            }
+        }
+        [HttpPut]
+        [Route("{Id}")]
+        public async Task<IActionResult> Update([FromBody] UpdateCharacterRequest request, Guid Id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ClientError(ModelState);
+                }
+                var result = await _characterService.Update_Dapper(request, Id);
+                return Success(null, result.Detail);
+            }
+            catch (Exception ex)
+            {
+                return Success(ex.StackTrace);
+            }
+            finally
+            {
+            }
+        }
+        [HttpDelete]
+        [Route("{Id}")]
+        public async Task<IActionResult> Delete(Guid Id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ClientError(ModelState);
+                }
+                var result = await _characterService.Delete_Dapper(Id);
                 return Success(null, result.Detail);
             }
             catch (Exception ex)

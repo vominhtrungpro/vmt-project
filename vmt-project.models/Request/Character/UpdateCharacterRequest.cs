@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace vmt_project.models.Request.Character
 {
-    public class CreateCharacterRequest
+    public class UpdateCharacterRequest
     {
         public string Name { get; set; }
         public bool IsUsingDapper { get; set; }
